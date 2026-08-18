@@ -4,8 +4,8 @@ import styles from './MainWheel.module.css';
 import SpinLoader from '../SpinLoader/SpinLoader';
 import WheelPointer from '../WheelPointer/WheelPointer';
 
-// Premium Fintech dark metallic segments
-const segmentColors = ['#1A1D24', '#222630'];
+// Premium Fintech metallic segments - Distinct medium-dark slate (visible but not white)
+const segmentColors = ['#334155', '#1E293B', '#475569'];
 
 const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSpinning, disabled }) => {
   const [rotation, setRotation] = useState(0);
