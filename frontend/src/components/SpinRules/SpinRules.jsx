@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Tooltip from '../Tooltip/Tooltip';
-import { BookOpen, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { BookOpen, AlertCircle } from 'lucide-react';
 
 const SpinRules = ({ styles }) => {
   return (
@@ -13,28 +13,28 @@ const SpinRules = ({ styles }) => {
         <div className={styles.stepsList}>
           <div className={styles.stepItem}>
             <div className={styles.stepNumber}>01</div>
-            <div>
+            <div className={styles.stepContent}>
               <h3 className={styles.stepHeading}>Get a Spin</h3>
               <p className={styles.stepDesc}>Available spins are shown above. Use an eligible spin to participate.</p>
             </div>
           </div>
           <div className={styles.stepItem}>
             <div className={styles.stepNumber}>02</div>
-            <div>
+            <div className={styles.stepContent}>
               <h3 className={styles.stepHeading}>Spin the Wheel</h3>
               <p className={styles.stepDesc}>Tap the SPIN button to start the wheel and discover your reward.</p>
             </div>
           </div>
           <div className={styles.stepItem}>
             <div className={styles.stepNumber}>03</div>
-            <div>
+            <div className={styles.stepContent}>
               <h3 className={styles.stepHeading}>Discover Your Reward</h3>
               <p className={styles.stepDesc}>The wheel selects the reward automatically.</p>
             </div>
           </div>
           <div className={styles.stepItem}>
             <div className={styles.stepNumber}>04</div>
-            <div>
+            <div className={styles.stepContent}>
               <h3 className={styles.stepHeading}>Keep Earning</h3>
               <p className={styles.stepDesc}>Return and participate again when more spins become available.</p>
             </div>

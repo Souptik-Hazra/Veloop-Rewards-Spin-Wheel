@@ -5,7 +5,7 @@ import SpinHero from '../../components/SpinHero/SpinHero';
 import RewardPreview from '../../components/RewardPreview/RewardPreview';
 import SpinRules from '../../components/SpinRules/SpinRules';
 import RewardResult from '../../components/RewardResult/RewardResult';
-import { ChevronLeft, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, AlertTriangle, ShieldCheck } from 'lucide-react';
 
 import { REWARDS } from '../../config/constants';
 import { apiService } from '../../services/apiService';
@@ -15,10 +15,22 @@ const SpinWheel = () => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [wonReward, setWonReward] = useState(null);
+  const [isTitleHidden, setIsTitleHidden] = useState(false);
 
   // Loading and Error states
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    if (isSpinning) {
+      setIsTitleHidden(true);
+    } else if (isTitleHidden) {
+      const timer = setTimeout(() => {
+        setIsTitleHidden(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isSpinning]);
 
   // Simulated API Fetch
   const fetchData = async () => {
@@ -100,7 +112,16 @@ const SpinWheel = () => {
           </div>
         ) : (
           <div className={styles.wheelSection}>
-            <h2 className={styles.wheelTitle}>Spin. Discover. Get Rewarded.</h2>
+            <h2 
+              className={styles.wheelTitle} 
+              style={{ 
+                opacity: isTitleHidden ? 0 : 1, 
+                transition: 'opacity 0.5s ease',
+                pointerEvents: isTitleHidden ? 'none' : 'auto'
+              }}
+            >
+              Spin. Discover. Get Rewarded.
+            </h2>
             <MainWheel 
               rewards={REWARDS.map(r => ({ label: r.wheelLabel, icon: r.icon, color: r.color, ...r }))}
               onSpinRequest={handleSpinRequest}
@@ -109,6 +130,9 @@ const SpinWheel = () => {
               setIsSpinning={setIsSpinning}
               disabled={availableSpins === 0}
             />
+            <div className={styles.trustBadge}>
+              <ShieldCheck size={16} /> 100% Fair Spin & Secure
+            </div>
           </div>
         )}
 
