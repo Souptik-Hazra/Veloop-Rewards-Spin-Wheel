@@ -1,0 +1,31 @@
+/* Premium Pointer */
+.pointerContainer {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+}
+
+.pointer {
+  width: 34px;
+  height: 40px;
+  background: linear-gradient(180deg, #F3E5AB 0%, #D4AF37 50%, #996515 100%);
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  border-radius: 2px;
+  transform-origin: top center;
+  transition: transform 0.1s ease-out;
+}
+
+/* Physics-based ticking animation while spinning */
+.ticking {
+  animation: pointerTick 0.15s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+@keyframes pointerTick {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-12deg); }
+  50% { transform: rotate(-6deg); }
+  100% { transform: rotate(0deg); }
+}
