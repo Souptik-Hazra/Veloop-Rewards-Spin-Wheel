@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserPlus, CircleDot, MousePointerClick, Gift, ShieldCheck, Check } from 'lucide-react';
+import { UserPlus, CircleDot, MousePointerClick, Gift, ShieldCheck, Check, ChevronRight } from 'lucide-react';
 import componentStyles from './SpinRules.module.css';
 import rulesGraphic from '../../assets/rules-graphic.png';
 
@@ -17,50 +17,62 @@ const SpinRules = ({ styles }) => {
         <div className={componentStyles.stepsGrid}>
           <div className={componentStyles.stepBox}>
             <div className={`${componentStyles.iconCircle} ${componentStyles.iconPurple}`}>
-              <UserPlus size={36} />
+              <UserPlus size={32} />
             </div>
             <div>
               <div className={componentStyles.stepHeader}>
-                <div className={componentStyles.stepBadge}>01</div>
+                <div className={`${componentStyles.stepBadge} ${componentStyles.badgePurple}`}>01</div>
                 <h3 className={componentStyles.stepTitle}>Login / Sign Up</h3>
               </div>
               <p className={componentStyles.stepDesc}>Login or create an account to get started.</p>
             </div>
           </div>
 
+          <div className={componentStyles.stepConnector}>
+            <ChevronRight size={22} className={componentStyles.connectorArrow} />
+          </div>
+
           <div className={componentStyles.stepBox}>
             <div className={`${componentStyles.iconCircle} ${componentStyles.iconOrange}`}>
-              <CircleDot size={36} />
+              <CircleDot size={32} />
             </div>
             <div>
               <div className={componentStyles.stepHeader}>
-                <div className={componentStyles.stepBadge}>02</div>
+                <div className={`${componentStyles.stepBadge} ${componentStyles.badgeOrange}`}>02</div>
                 <h3 className={componentStyles.stepTitle}>Get Spins</h3>
               </div>
               <p className={componentStyles.stepDesc}>You get 3 free spins every day.</p>
             </div>
           </div>
 
+          <div className={componentStyles.stepConnector}>
+            <ChevronRight size={22} className={componentStyles.connectorArrow} />
+          </div>
+
           <div className={componentStyles.stepBox}>
             <div className={`${componentStyles.iconCircle} ${componentStyles.iconGreen}`}>
-              <MousePointerClick size={36} />
+              <MousePointerClick size={32} />
             </div>
             <div>
               <div className={componentStyles.stepHeader}>
-                <div className={componentStyles.stepBadge}>03</div>
+                <div className={`${componentStyles.stepBadge} ${componentStyles.badgeGreen}`}>03</div>
                 <h3 className={componentStyles.stepTitle}>Spin the Wheel</h3>
               </div>
               <p className={componentStyles.stepDesc}>Use your spins to spin the wheel.</p>
             </div>
           </div>
 
+          <div className={componentStyles.stepConnector}>
+            <ChevronRight size={22} className={componentStyles.connectorArrow} />
+          </div>
+
           <div className={componentStyles.stepBox}>
             <div className={`${componentStyles.iconCircle} ${componentStyles.iconPink}`}>
-              <Gift size={36} />
+              <Gift size={32} />
             </div>
             <div>
               <div className={componentStyles.stepHeader}>
-                <div className={componentStyles.stepBadge}>04</div>
+                <div className={`${componentStyles.stepBadge} ${componentStyles.badgePink}`}>04</div>
                 <h3 className={componentStyles.stepTitle}>Win Rewards</h3>
               </div>
               <p className={componentStyles.stepDesc}>Win exciting coins, discounts & more!</p>

@@ -1,98 +1,270 @@
 .container {
-  background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45), inset 0 0 20px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 24px;
-  padding: 1rem;
-  height: 100%;
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  gap: 1.25rem;
 }
 
+/* Header */
 .header {
-  padding-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  margin-bottom: 0.75rem;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.headerIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FDE047;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #F8FAFC;
+  letter-spacing: 0.8px;
   margin: 0;
+  line-height: 1.2;
 }
 
-.list {
+.subtitle {
+  font-size: 0.75rem;
+  color: #94A3B8;
+  margin: 0.2rem 0 0 0;
+  font-weight: 500;
+}
+
+.boostPill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #FDE047;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 0.35rem 0.8rem;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Cards Grid */
+.cardsGrid {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.item {
+.earnCard {
+  background: rgba(30, 41, 59, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 0.9rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.earnCard:hover {
+  background: rgba(30, 41, 59, 0.75);
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Header Row */
+.cardHeaderRow {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  transition: opacity 0.3s ease;
+  gap: 0.75rem;
+  width: 100%;
 }
 
-.item.inactive {
-  opacity: 0.4;
-}
-
-.iconWrapper {
+/* Icon Medallions */
+.iconContainer {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
   flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFF;
 }
 
-.item:nth-child(1) .iconWrapper {
-  background: linear-gradient(135deg, #10B981, #059669); /* Green */
-}
+.iconGold { background: linear-gradient(135deg, #F59E0B, #D97706); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
+.iconGreen { background: linear-gradient(135deg, #10B981, #059669); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
+.iconPurple { background: linear-gradient(135deg, #8B5CF6, #6D28D9); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); }
+.iconCyan { background: linear-gradient(135deg, #06B6D4, #0891B2); box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4); }
+.iconPink { background: linear-gradient(135deg, #EC4899, #BE185D); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4); }
 
-.item:nth-child(2) .iconWrapper {
-  background: linear-gradient(135deg, #F59E0B, #D97706); /* Gold */
-}
-
-.item:nth-child(3) .iconWrapper {
-  background: linear-gradient(135deg, #475569, #1E293B); /* Slate/Grey */
-}
-
-.itemContent {
+/* Title & Reward Tag */
+.titleAndTag {
+  flex: 1;
+  min-width: 0;
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
-.itemTitle {
+.cardTitle {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.itemDesc {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  line-height: 1.4;
-}
-
-.upcomingBadge {
-  font-size: 0.7rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-muted);
-  padding: 0.25rem 0.6rem;
-  border-radius: 4px;
-  display: inline-block;
-  width: fit-content;
-  margin-top: 0.25rem;
+  color: #F8FAFC;
+  line-height: 1.25;
+}
+
+/* Reward Tags */
+.rewardTag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  padding: 0.12rem 0.45rem;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.goldTag {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(212, 175, 55, 0.1));
+  color: #FDE047;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.greenTag {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.purpleTag {
+  background: rgba(139, 92, 246, 0.15);
+  color: #C084FC;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.cyanTag {
+  background: rgba(6, 182, 212, 0.15);
+  color: #38BDF8;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.pinkTag {
+  background: rgba(236, 72, 153, 0.15);
+  color: #F472B6;
+  border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+/* Action Button */
+.actionCol {
+  flex-shrink: 0;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.activeActionBtn {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.08));
+  color: #FDE047;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.activeActionBtn:hover {
+  background: linear-gradient(135deg, #FDE047, #F59E0B);
+  color: #0F172A;
+  transform: translateX(2px);
+}
+
+.activeActionBtn:hover .chevron {
+  color: #0F172A;
+}
+
+.passiveActionBtn {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94A3B8;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: default;
+}
+
+.chevron {
+  color: #FDE047;
+  transition: color 0.2s ease;
+}
+
+/* Description text */
+.cardDesc {
+  margin: 0;
+  padding-left: 46px; /* Aligns neatly under the title text after the icon */
+  font-size: 0.76rem;
+  color: #94A3B8;
+  line-height: 1.35;
+}
+
+/* Mobile Responsive */
+@media (max-width: 520px) {
+  .container {
+    padding: 1rem 0.85rem;
+    border-radius: 20px;
+  }
+  .cardHeaderRow {
+    gap: 0.6rem;
+  }
+  .iconContainer {
+    width: 34px;
+    height: 34px;
+  }
+  .cardTitle {
+    font-size: 0.82rem;
+  }
+  .rewardTag {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.35rem;
+  }
+  .actionBtn {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.7rem;
+  }
+  .cardDesc {
+    padding-left: 0; /* Natural full-width wrap on very narrow screens */
+    font-size: 0.72rem;
+  }
 }

@@ -58,11 +58,47 @@
 
 .label {
   flex: 1;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: #F8FAFC;
 }
 
+.rarityBadge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  margin-right: 0.5rem;
+  white-space: nowrap;
+}
+
+.common {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60A5FA;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.rare {
+  background: rgba(168, 85, 247, 0.15);
+  color: #C084FC;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.legendary {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(212, 175, 55, 0.1));
+  color: #FDE047;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+}
+
 .arrowIcon {
   color: #64748B;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.listItem:hover .arrowIcon {
+  color: #CBD5E1;
+  transform: translateX(2px);
 }

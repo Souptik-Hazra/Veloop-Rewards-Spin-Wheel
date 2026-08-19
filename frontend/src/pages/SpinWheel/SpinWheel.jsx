@@ -332,12 +332,12 @@ const SpinWheel = () => {
             </div>
 
             <div className={styles.mainContentGrid}>
-              {/* Left Column */}
-              <div className={styles.sidebarLeft}>
+              {/* Row 1, Column 1: Possible Rewards */}
+              <div className={styles.rewardsColumn}>
                 <RewardPreview rewards={REWARDS} />
               </div>
               
-              {/* Center Column */}
+              {/* Row 1, Column 2: Center Wheel */}
               <div className={styles.wheelSection}>
                 <MainWheel 
                   rewards={REWARDS.map(r => ({ label: r.wheelLabel, icon: r.icon, color: r.color, ...r }))}
@@ -348,21 +348,12 @@ const SpinWheel = () => {
                   disabled={availableSpins === 0}
                 />
                 <div className={styles.trustBadge}>
-                  <ShieldCheck size={16} /> 100% Fair Spin & Secure
-                </div>
-                
-                <div style={{marginTop: '1.5rem', width: '100%', display: 'flex', justifyContent: 'center'}}>
-                  <SpinJourney 
-                    spinsTaken={spinsTaken} 
-                    totalMilestone={3}
-                    onClaimBonus={handleClaimMilestone}
-                    isClaimingBonus={isClaimingMilestone}
-                  />
+                  <ShieldCheck size={15} /> 100% Fair Spin & Secure
                 </div>
               </div>
 
-              {/* Right Column (Daily Bonus) */}
-              <div className={styles.sidebarRight}>
+              {/* Row 1, Column 3: Daily Bonus Card */}
+              <div className={styles.bonusColumn}>
                 <div className={styles.dailyBonusCard}>
                   <div className={styles.dailyBonusHeader}>
                     <Calendar size={18} className={styles.dailyBonusIcon}/>
@@ -409,7 +400,20 @@ const SpinWheel = () => {
                     </div>
                   </div>
                 </div>
-                
+              </div>
+
+              {/* Row 2, Columns 1 & 2 (Spanning across Left & Center): Spin Journey */}
+              <div className={styles.journeySpannedColumn}>
+                <SpinJourney 
+                  spinsTaken={spinsTaken} 
+                  totalMilestone={3}
+                  onClaimBonus={handleClaimMilestone}
+                  isClaimingBonus={isClaimingMilestone}
+                />
+              </div>
+
+              {/* Row 2, Column 3: Your Inventory */}
+              <div className={styles.inventoryColumn}>
                 <WalletBalances balances={balances} />
               </div>
             </div>

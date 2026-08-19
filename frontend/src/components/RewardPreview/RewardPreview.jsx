@@ -16,7 +16,12 @@ const RewardPreview = ({ rewards }) => {
               {reward.icon}
             </div>
             <span className={styles.label}>{reward.gridLabel || reward.wheelLabel}</span>
-            <ChevronRight size={16} className={styles.arrowIcon} />
+            {reward.rarity && reward.type !== 'None' && (
+              <span className={`${styles.rarityBadge} ${styles[reward.rarity]}`}>
+                {reward.rarity}
+              </span>
+            )}
+            <ChevronRight size={15} className={styles.arrowIcon} />
           </div>
         ))}
       </div>

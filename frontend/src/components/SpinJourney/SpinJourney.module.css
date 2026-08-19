@@ -1,241 +1,412 @@
 .journeyContainer {
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto 2rem;
-  padding: 1.25rem;
-  background: transparent;
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  max-width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 1.25rem 1.75rem;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45), inset 0 0 20px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Subtle Interior Glow */
+.journeyContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent);
+}
+
+/* Header */
 .journeyHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.journeyTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
+.journeyTitleWrapper {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin: 0;
+  gap: 0.75rem;
+}
+
+.iconBadge {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .icon {
-  color: var(--gold-primary);
+  color: #FDE047;
 }
 
-.journeyProgress {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
+.journeyTitle {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #F8FAFC;
+  letter-spacing: 0.8px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.journeySubtitle {
+  font-size: 0.72rem;
+  color: #94A3B8;
   font-weight: 500;
-  background: rgba(255,255,255,0.05);
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
 }
 
+.progressPill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #FDE047;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.pillSparkle {
+  color: #FDE047;
+}
+
+/* Timeline Layout (Vertically Centered below header line) */
 .timeline {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   position: relative;
-  padding: 0.5rem 0;
+  margin: auto 0;
+  padding: 0.75rem 0.25rem 0.25rem;
 }
 
+/* Node Container */
 .node {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  color: var(--text-muted);
   position: relative;
   z-index: 2;
   transition: all 0.3s ease;
+  user-select: none;
 }
 
-.completedNode {
-  color: var(--gold-primary);
-}
-
-.currentNode {
-  color: var(--text-primary);
-  text-shadow: 0 0 10px rgba(255,255,255,0.3);
-}
-
-.nodeLabel {
-  font-size: 0.75rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.lineWrapper {
-  flex-grow: 1;
-  height: 20px;
-  margin: 0 5px;
-  margin-bottom: 20px; /* align with icons, not labels */
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-}
-
-.waveSvg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.wavePathBase {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.1);
-  stroke-width: 2px;
-}
-
-.wavePathActive {
-  fill: none;
-  stroke: var(--gold-primary);
-  stroke-width: 3px;
-  stroke-dasharray: 10 15;
-  animation: waveMotion 1s linear infinite;
-  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.8));
-}
-
-@keyframes waveMotion {
-  from { stroke-dashoffset: 25; }
-  to { stroke-dashoffset: 0; }
-}
-
-.bonusNode {
-  color: var(--text-muted);
-  background: rgba(255,255,255,0.05);
-  padding: 0.5rem;
-  border-radius: 12px;
-  border: 1px solid var(--glass-border);
-}
-
-.bonusAchieved {
-  color: var(--gold-primary);
-  border-color: var(--gold-primary);
-  background: rgba(212, 175, 55, 0.1);
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.3), inset 0 0 5px rgba(212, 175, 55, 0.2);
-}
-
-.bonusUnlockedCard {
-  position: relative;
-  margin-top: 1.5rem;
-  padding: 1.25rem;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(212,175,55,0.05) 0%, rgba(212,175,55,0.15) 100%);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2), 0 0 20px rgba(212, 175, 55, 0.1);
-  animation: slideUpFade 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-@keyframes slideUpFade {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.bonusGlowBg {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle at center, rgba(212,175,55,0.2) 0%, transparent 60%);
-  animation: rotateGlow 10s linear infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-
-@keyframes rotateGlow {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.bonusIconWrapper {
-  position: relative;
-  z-index: 1;
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-  background: linear-gradient(145deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));
-  border: 1px solid rgba(212,175,55,0.4);
+/* Token Badge Base */
+.tokenBadge {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 15px rgba(212,175,55,0.3);
+  font-weight: 700;
+  font-size: 0.82rem;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nodeLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  transition: color 0.3s ease;
+}
+
+/* 1. COMPLETED NODE (Gold Metallic Medallion) */
+.completedNode .tokenBadge {
+  background: linear-gradient(135deg, #FFF 0%, #FDE047 30%, #F59E0B 70%, #B45309 100%);
+  color: #0F172A;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.completedNode .checkIcon {
+  color: #0F172A;
+  filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.4));
+}
+
+.completedNode .nodeLabel {
+  color: #FDE047;
+  font-weight: 700;
+}
+
+/* 2. CURRENT ACTIVE NODE (Illuminated Radiant Beacon) */
+.currentNode .tokenBadge {
+  background: linear-gradient(135deg, #1E1B4B, #0F172A);
+  color: #F8FAFC;
+  border: 2px solid #A855F7;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.6), inset 0 0 10px rgba(168, 85, 247, 0.4);
+  animation: pulseBeacon 2.2s infinite ease-in-out;
+}
+
+.currentNode .stepNum {
+  color: #FFF;
+  font-weight: 800;
+}
+
+.currentNode .nodeLabel {
+  color: #FFF;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.beaconIndicator {
+  position: absolute;
+  top: -18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: floatStar 1.8s infinite ease-in-out alternate;
+}
+
+.beaconStar {
+  font-size: 15px;
+  color: #A855F7;
+  text-shadow: 0 0 10px #A855F7, 0 0 20px #C084FC;
+}
+
+@keyframes floatStar {
+  0% { transform: translateY(0px) scale(0.9); }
+  100% { transform: translateY(-4px) scale(1.15); }
+}
+
+@keyframes pulseBeacon {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4), inset 0 0 8px rgba(168, 85, 247, 0.3);
+    border-color: #A855F7;
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.8), inset 0 0 15px rgba(168, 85, 247, 0.6);
+    border-color: #C084FC;
+  }
+}
+
+/* 3. UPCOMING NODE (Slate Glass Token) */
+.upcomingNode .tokenBadge {
+  background: rgba(30, 41, 59, 0.5);
+  color: #64748B;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.upcomingNode .stepNum {
+  color: #64748B;
+}
+
+.upcomingNode .nodeLabel {
+  color: #64748B;
+}
+
+/* Connecting Energy Conduit Track */
+.lineWrapper {
+  flex-grow: 1;
+  height: 4px;
+  margin: 0 8px 22px 8px; /* align with token badge center */
+  position: relative;
+  z-index: 1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.trackBase {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 4px;
+}
+
+.trackProgress {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.trackCompleted {
+  width: 100%;
+  background: linear-gradient(90deg, #F59E0B, #FDE047);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+}
+
+.trackActive {
+  width: 50%;
+  background: linear-gradient(90deg, #F59E0B, #A855F7);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+  animation: energyPulse 1.5s infinite linear;
+}
+
+@keyframes energyPulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Final Milestone Mystery Gift Node */
+.tokenBadgeBonus {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1E1B4B, #0F172A);
+  border: 1.5px solid rgba(168, 85, 247, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.bonusGiftIcon {
+  color: #C084FC;
+  transition: transform 0.3s ease;
+}
+
+.nodeLabelBonus {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #C084FC;
+}
+
+.bonusRewardTag {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #FFF;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.15rem 0.4rem;
+  border-radius: 10px;
+  border: 1px solid #FFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.bonusAchieved .tokenBadgeBonus {
+  background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+  border-color: #FDE047;
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.8), 0 0 10px rgba(253, 224, 71, 0.5);
+  animation: bounceVault 2s infinite ease-in-out;
+}
+
+.bonusAchieved .bonusGiftIcon {
+  color: #FFF;
+  transform: scale(1.1);
+}
+
+.bonusAchieved .nodeLabelBonus {
+  color: #FDE047;
+  text-shadow: 0 0 8px rgba(253, 224, 71, 0.5);
+}
+
+@keyframes bounceVault {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.06); }
+}
+
+/* Milestone Celebration Card */
+.bonusUnlockedCard {
+  position: relative;
+  margin-top: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(212, 175, 55, 0.15) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 25px rgba(212, 175, 55, 0.2);
+  animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bonusIconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.5);
+  flex-shrink: 0;
 }
 
 .bonusIcon {
-  color: var(--gold-primary);
+  color: #FFF;
 }
 
 .bonusTextContent {
-  position: relative;
-  z-index: 1;
-  flex-grow: 1;
+  flex: 1;
 }
 
 .bonusTitle {
   margin: 0 0 0.25rem 0;
   font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.02em;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  font-weight: 800;
+  color: #FFF;
+  letter-spacing: 0.3px;
 }
 
 .bonusDesc {
   margin: 0;
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.7);
+  font-size: 0.8rem;
+  color: #E2E8F0;
   line-height: 1.4;
 }
 
 .bonusBtn {
-  position: relative;
-  z-index: 1;
-  background: linear-gradient(90deg, #D4AF37 0%, #FFDF73 100%);
-  color: #000;
+  background: linear-gradient(135deg, #FDE047, #F59E0B);
+  color: #0F172A;
   border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 0.9rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.92rem;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(212,175,55,0.4);
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-width: 100px;
+  gap: 0.4rem;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.bonusBtn:not(:disabled):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212,175,55,0.6);
-  filter: brightness(1.1);
-}
-
-.bonusBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  filter: grayscale(0.5);
+.bonusBtn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
 }
 
 .spinner {
@@ -247,38 +418,29 @@
   to { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
-  .journeyContainer {
-    margin-bottom: 0.5rem;
-  }
-}
-
 @media (max-width: 480px) {
   .journeyContainer {
-    margin-bottom: 0.5rem;
-    padding: 1rem 0.5rem;
+    padding: 1rem;
   }
-  .timeline {
-    padding-bottom: 0.5rem;
+  .tokenBadge {
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
   }
-  .node {
-    min-width: 45px;
-    gap: 0.25rem;
+  .tokenBadgeBonus {
+    width: 36px;
+    height: 36px;
   }
-  .lineWrapper {
-    min-width: 20px;
-    margin: 0 2px;
-  }
-  .nodeLabel {
-    font-size: 0.65rem;
+  .nodeLabel, .nodeLabelBonus {
+    font-size: 0.68rem;
   }
   .bonusUnlockedCard {
     flex-direction: column;
     text-align: center;
-    gap: 0.75rem;
     padding: 1rem;
   }
   .bonusBtn {
     width: 100%;
+    justify-content: center;
   }
 }
