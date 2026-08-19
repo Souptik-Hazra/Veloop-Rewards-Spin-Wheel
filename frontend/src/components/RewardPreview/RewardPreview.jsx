@@ -1,22 +1,22 @@
 import React from 'react';
-import Tooltip from '../Tooltip/Tooltip';
-import { Gift } from 'lucide-react';
+import { Gift, ChevronRight } from 'lucide-react';
+import styles from './RewardPreview.module.css';
 
-const RewardPreview = ({ rewards, styles }) => {
+const RewardPreview = ({ rewards }) => {
   return (
-    <div className={styles.fullWidthWidget}>
-      <h2 className={styles.widgetTitle}>
-        <Gift size={20} className={styles.logoIcon} aria-hidden="true"/> 
-        Possible Rewards 
-        <Tooltip id="tooltip-rewards" text="A preview of the rewards you can unlock by spinning the wheel." />
+    <div className={styles.container}>
+      <h2 className={styles.title}>
+        <Gift size={18} className={styles.titleIcon} aria-hidden="true"/> 
+        POSSIBLE REWARDS 
       </h2>
-      <div className={styles.rewardPreviewGrid}>
+      <div className={styles.list}>
         {rewards.map((reward, index) => (
-          <div key={index} className={styles.previewCard}>
-            <div className={styles.previewIcon}>
+          <div key={index} className={styles.listItem}>
+            <div className={styles.iconWrapper}>
               {reward.icon}
             </div>
-            <span className={styles.previewLabel}>{reward.gridLabel}</span>
+            <span className={styles.label}>{reward.gridLabel || reward.wheelLabel}</span>
+            <ChevronRight size={16} className={styles.arrowIcon} />
           </div>
         ))}
       </div>

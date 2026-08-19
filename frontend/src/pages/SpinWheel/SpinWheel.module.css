@@ -96,11 +96,29 @@
 /* Layout */
 .mainLayout {
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: 300px 1fr 340px;
   grid-template-areas: 
-    "wheel hero";
+    "sidebar wheel hero";
   align-items: start;
   gap: 1.5rem;
+}
+
+.sidebarLeft {
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 993px) {
+  .mobileOnlyTab, .mobileOnlyContent {
+    display: none !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .sidebarLeft {
+    display: none;
+  }
 }
 
 /* Tabs Navigation */
@@ -624,6 +642,9 @@
 @media (max-width: 992px) {
   .mainLayout {
     grid-template-columns: 1fr;
+    grid-template-areas: 
+      "hero"
+      "wheel";
   }
 }
 

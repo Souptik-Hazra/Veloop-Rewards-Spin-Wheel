@@ -20,7 +20,7 @@ const SpinWheel = () => {
   const [wonReward, setWonReward] = useState(null);
   const [balances, setBalances] = useState(null);
   const [isTitleHidden, setIsTitleHidden] = useState(false);
-  const [activeTab, setActiveTab] = useState('prizes');
+  const [activeTab, setActiveTab] = useState(typeof window !== 'undefined' && window.innerWidth > 992 ? 'rules' : 'prizes');
 
   // Loading and Error states
   const [isLoading, setIsLoading] = useState(true);
@@ -157,7 +157,11 @@ const SpinWheel = () => {
             <button className={styles.errorBtn} onClick={fetchData}>Try Again</button>
           </div>
         ) : (
-          <div className={styles.wheelSection}>
+          <>
+            <div className={styles.sidebarLeft}>
+              <RewardPreview rewards={REWARDS} />
+            </div>
+            <div className={styles.wheelSection}>
             <h2 
               className={styles.wheelTitle} 
               style={{ 
@@ -189,6 +193,7 @@ const SpinWheel = () => {
               />
             </div>
           </div>
+          </>
         )}
 
         <SpinHero 
@@ -200,7 +205,7 @@ const SpinWheel = () => {
 
       <div className={styles.tabsContainer}>
         <button 
-          className={`${styles.tabBtn} ${activeTab === 'prizes' ? styles.activeTab : ''}`}
+          className={`${styles.tabBtn} ${styles.mobileOnlyTab} ${activeTab === 'prizes' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('prizes')}
         >
           Prizes
@@ -220,7 +225,11 @@ const SpinWheel = () => {
       </div>
 
       <div className={styles.tabContentArea}>
-        {activeTab === 'prizes' && <RewardPreview rewards={REWARDS} styles={styles} />}
+        {activeTab === 'prizes' && (
+          <div className={styles.mobileOnlyContent}>
+            <RewardPreview rewards={REWARDS} />
+          </div>
+        )}
         {activeTab === 'rules' && <SpinRules styles={styles} />}
         {activeTab === 'activity' && (
           <div className={styles.bottomWidgetsGrid}>
