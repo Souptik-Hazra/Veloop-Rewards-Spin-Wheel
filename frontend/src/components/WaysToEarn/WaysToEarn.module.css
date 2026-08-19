@@ -48,14 +48,22 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
-  border: 1px solid rgba(255,255,255,0.1);
   flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  color: #fff;
 }
 
-.item:nth-child(1) .iconWrapper { color: #fff; }
-.item:nth-child(2) .iconWrapper { color: #EAB308; background: rgba(234,179,8,0.1); border-color: rgba(234,179,8,0.2); }
+.item:nth-child(1) .iconWrapper {
+  background: linear-gradient(135deg, #10B981, #059669); /* Green */
+}
+
+.item:nth-child(2) .iconWrapper {
+  background: linear-gradient(135deg, #F59E0B, #D97706); /* Gold */
+}
+
+.item:nth-child(3) .iconWrapper {
+  background: linear-gradient(135deg, #475569, #1E293B); /* Slate/Grey */
+}
 
 .itemContent {
   display: flex;

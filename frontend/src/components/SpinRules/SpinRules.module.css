@@ -1,0 +1,251 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.howItWorksCard {
+  background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.diamond {
+  color: var(--gold-primary);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.stepsGrid {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* Connecting arrows */
+.stepsGrid::before {
+  content: '';
+  position: absolute;
+  top: 40px; /* middle of icons */
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background-image: linear-gradient(to right, rgba(255,255,255,0.2) 50%, transparent 50%);
+  background-size: 10px 2px;
+  background-repeat: repeat-x;
+  z-index: 0;
+}
+
+.stepBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 22%;
+  z-index: 1;
+  background: transparent;
+  padding: 0;
+}
+
+.iconCircle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  color: white;
+}
+
+/* Gradients matching Veloop theme */
+.iconPurple { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
+.iconOrange { background: linear-gradient(135deg, #F59E0B, #D97706); }
+.iconGreen { background: linear-gradient(135deg, #10B981, #059669); }
+.iconPink { background: linear-gradient(135deg, #EC4899, #BE185D); }
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.stepBadge {
+  background: var(--gold-primary);
+  color: #000;
+  font-weight: 800;
+  font-size: 0.75rem;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.stepDesc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Rules Card */
+.rulesCard {
+  background: radial-gradient(circle at 80% 50%, rgba(88, 28, 135, 0.2) 0%, rgba(255,255,255,0.02) 60%),
+              linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+  background-color: var(--bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.rulesContent {
+  flex: 1;
+  max-width: 60%;
+  z-index: 2;
+}
+
+.rulesHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.shieldIcon {
+  color: var(--gold-primary);
+  background: rgba(212, 175, 55, 0.15);
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+.rulesTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.rulesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ruleItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.checkIcon {
+  color: var(--gold-primary);
+  background: rgba(212, 175, 55, 0.15);
+  border-radius: 50%;
+  padding: 2px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.ruleText {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.rulesImageContainer {
+  flex: 0 0 35%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.rulesGraphic {
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+  object-fit: contain;
+  animation: floatReward 6s ease-in-out infinite;
+}
+
+@keyframes floatReward {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+@media (max-width: 992px) {
+  .stepsGrid {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .stepsGrid::before {
+    display: none;
+  }
+  .stepBox {
+    width: 100%;
+    flex-direction: row;
+    text-align: left;
+    background: transparent;
+    padding: 0;
+  }
+  .iconCircle {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 0;
+    margin-right: 1.5rem;
+    flex-shrink: 0;
+  }
+  .rulesCard {
+    flex-direction: column;
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+  .rulesContent {
+    max-width: 100%;
+  }
+  .rulesImageContainer {
+    width: 100%;
+  }
+}

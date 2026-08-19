@@ -1,65 +1,107 @@
 import React from 'react';
-import Tooltip from '../Tooltip/Tooltip';
-import { BookOpen, AlertCircle } from 'lucide-react';
+import { UserPlus, CircleDot, MousePointerClick, Gift, ShieldCheck, Check } from 'lucide-react';
+import componentStyles from './SpinRules.module.css';
+import rulesGraphic from '../../assets/rules-graphic.png';
 
 const SpinRules = ({ styles }) => {
   return (
-    <div className={styles.bottomWidgets}>
-      <div className={styles.fullWidthWidget} style={{marginTop: 0}}>
-        <h2 className={styles.widgetTitle}>
-          <BookOpen size={20} className={styles.logoIcon} aria-hidden="true"/> 
-          How Spin Works
-        </h2>
-        <div className={styles.stepsList}>
-          <div className={styles.stepItem}>
-            <div className={styles.stepNumber}>01</div>
-            <div className={styles.stepContent}>
-              <h3 className={styles.stepHeading}>Get a Spin</h3>
-              <p className={styles.stepDesc}>Available spins are shown above. Use an eligible spin to participate.</p>
+    <div className={componentStyles.container}>
+      {/* HOW IT WORKS SECTION */}
+      <div className={componentStyles.howItWorksCard}>
+        <div className={componentStyles.sectionTitle}>
+          <span className={componentStyles.diamond}>♦</span>
+          HOW IT WORKS
+          <span className={componentStyles.diamond}>♦</span>
+        </div>
+        
+        <div className={componentStyles.stepsGrid}>
+          <div className={componentStyles.stepBox}>
+            <div className={`${componentStyles.iconCircle} ${componentStyles.iconPurple}`}>
+              <UserPlus size={36} />
+            </div>
+            <div>
+              <div className={componentStyles.stepHeader}>
+                <div className={componentStyles.stepBadge}>01</div>
+                <h3 className={componentStyles.stepTitle}>Login / Sign Up</h3>
+              </div>
+              <p className={componentStyles.stepDesc}>Login or create an account to get started.</p>
             </div>
           </div>
-          <div className={styles.stepItem}>
-            <div className={styles.stepNumber}>02</div>
-            <div className={styles.stepContent}>
-              <h3 className={styles.stepHeading}>Spin the Wheel</h3>
-              <p className={styles.stepDesc}>Tap the SPIN button to start the wheel and discover your reward.</p>
+
+          <div className={componentStyles.stepBox}>
+            <div className={`${componentStyles.iconCircle} ${componentStyles.iconOrange}`}>
+              <CircleDot size={36} />
+            </div>
+            <div>
+              <div className={componentStyles.stepHeader}>
+                <div className={componentStyles.stepBadge}>02</div>
+                <h3 className={componentStyles.stepTitle}>Get Spins</h3>
+              </div>
+              <p className={componentStyles.stepDesc}>You get 3 free spins every day.</p>
             </div>
           </div>
-          <div className={styles.stepItem}>
-            <div className={styles.stepNumber}>03</div>
-            <div className={styles.stepContent}>
-              <h3 className={styles.stepHeading}>Discover Your Reward</h3>
-              <p className={styles.stepDesc}>The wheel selects the reward automatically.</p>
+
+          <div className={componentStyles.stepBox}>
+            <div className={`${componentStyles.iconCircle} ${componentStyles.iconGreen}`}>
+              <MousePointerClick size={36} />
+            </div>
+            <div>
+              <div className={componentStyles.stepHeader}>
+                <div className={componentStyles.stepBadge}>03</div>
+                <h3 className={componentStyles.stepTitle}>Spin the Wheel</h3>
+              </div>
+              <p className={componentStyles.stepDesc}>Use your spins to spin the wheel.</p>
             </div>
           </div>
-          <div className={styles.stepItem}>
-            <div className={styles.stepNumber}>04</div>
-            <div className={styles.stepContent}>
-              <h3 className={styles.stepHeading}>Keep Earning</h3>
-              <p className={styles.stepDesc}>Return and participate again when more spins become available.</p>
+
+          <div className={componentStyles.stepBox}>
+            <div className={`${componentStyles.iconCircle} ${componentStyles.iconPink}`}>
+              <Gift size={36} />
+            </div>
+            <div>
+              <div className={componentStyles.stepHeader}>
+                <div className={componentStyles.stepBadge}>04</div>
+                <h3 className={componentStyles.stepTitle}>Win Rewards</h3>
+              </div>
+              <p className={componentStyles.stepDesc}>Win exciting coins, discounts & more!</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className={styles.fullWidthWidget} style={{marginTop: 0}}>
-        <div 
-          className={styles.widgetTitle} 
-          style={{display: 'flex', alignItems: 'center'}}
-        >
-          <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-            <AlertCircle size={20} className={styles.logoIcon} aria-hidden="true"/> 
-            <h2 style={{fontSize: 'inherit', margin: 0}}>Spin Rules</h2>
-            <Tooltip id="tooltip-rules" text="Important information about how the Spin the Wheel feature works." />
+      {/* SPIN RULES SECTION */}
+      <div className={componentStyles.rulesCard}>
+        <div className={componentStyles.rulesContent}>
+          <div className={componentStyles.rulesHeader}>
+            <div className={componentStyles.shieldIcon}>
+              <ShieldCheck size={28} />
+            </div>
+            <h2 className={componentStyles.rulesTitle}>SPIN RULES</h2>
           </div>
+          
+          <ul className={componentStyles.rulesList}>
+            <li className={componentStyles.ruleItem}>
+              <Check size={18} className={componentStyles.checkIcon} />
+              <span className={componentStyles.ruleText}>You get 3 free spins every day.</span>
+            </li>
+            <li className={componentStyles.ruleItem}>
+              <Check size={18} className={componentStyles.checkIcon} />
+              <span className={componentStyles.ruleText}>Each spin gives you a random reward.</span>
+            </li>
+            <li className={componentStyles.ruleItem}>
+              <Check size={18} className={componentStyles.checkIcon} />
+              <span className={componentStyles.ruleText}>Rewards will be added to your account instantly.</span>
+            </li>
+            <li className={componentStyles.ruleItem}>
+              <Check size={18} className={componentStyles.checkIcon} />
+              <span className={componentStyles.ruleText}>Keep spinning and keep winning!</span>
+            </li>
+          </ul>
         </div>
-        <ul id="spin-rules-list" className={`${styles.rulesList} ${styles.expanded}`}>
-          <li>Spins are earned through eligible activities on the platform.</li>
-          <li>Available spins are displayed at the top of this page.</li>
-          <li>Rewards are added to your account automatically upon winning.</li>
-          <li>If you encounter an issue, please contact support before attempting another spin.</li>
-          <li>All spins are subject to the platform's standard terms of service.</li>
-        </ul>
+        
+        <div className={componentStyles.rulesImageContainer}>
+          <img src={rulesGraphic} alt="Rewards" className={componentStyles.rulesGraphic} />
+        </div>
       </div>
     </div>
   );

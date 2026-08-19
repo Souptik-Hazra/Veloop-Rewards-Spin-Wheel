@@ -8,14 +8,16 @@
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
 }
 
-.pointer {
-  width: 34px;
-  height: 40px;
-  background: linear-gradient(180deg, #F3E5AB 0%, #D4AF37 50%, #996515 100%);
-  clip-path: polygon(50% 100%, 0 0, 100% 0);
-  border-radius: 2px;
-  transform-origin: top center;
+.pointerWrapper {
+  width: 32px;
+  height: 45px;
+  transform-origin: 50% 14px; /* pivot around the top rounded part */
   transition: transform 0.1s ease-out;
+}
+
+.pointerWrapper svg {
+  display: block;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,0.4));
 }
 
 /* Physics-based ticking animation while spinning */
