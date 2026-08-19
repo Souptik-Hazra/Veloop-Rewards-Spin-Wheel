@@ -145,17 +145,25 @@ const SpinWheel = () => {
   };
 
   const handleSpinComplete = (reward) => {
+    const actualReward = pendingSpinResult?.reward || reward;
+
     if (pendingSpinResult) {
       setAvailableSpins(pendingSpinResult.availableSpins);
-      setSpinsTaken(pendingSpinResult.spinsTaken);
+      setSpinsTaken(pendingSpinResult.consecutiveWins !== undefined ? pendingSpinResult.consecutiveWins : pendingSpinResult.spinsTaken);
       if (pendingSpinResult.balances) {
         setBalances(pendingSpinResult.balances);
       }
-      setWonReward(pendingSpinResult.reward || reward);
+      setWonReward(actualReward);
     } else {
       setWonReward(reward);
-      setSpinsTaken(prev => prev + 1);
       setAvailableSpins(prev => Math.max(0, prev - 1));
+
+      // Track 3 consecutive wins streak
+      if (reward && reward.type !== 'None') {
+        setSpinsTaken(prev => prev + 1);
+      } else {
+        setSpinsTaken(0); // Reset consecutive wins streak on loss
+      }
 
       // Optimistic balance update
       if (reward && reward.type !== 'None' && balances) {

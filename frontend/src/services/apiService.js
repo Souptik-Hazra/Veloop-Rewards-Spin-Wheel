@@ -104,7 +104,14 @@ export const apiService = {
 
         // Deduct spin
         MOCK_STATE.availableSpins = Math.max(0, MOCK_STATE.availableSpins - 1);
-        MOCK_STATE.spinsTaken += 1;
+        
+        // Track consecutive wins streak
+        if (reward.type !== 'None') {
+          MOCK_STATE.consecutiveWins = (MOCK_STATE.consecutiveWins || 0) + 1;
+        } else {
+          MOCK_STATE.consecutiveWins = 0; // Reset streak on Lose
+        }
+        MOCK_STATE.spinsTaken = MOCK_STATE.consecutiveWins;
 
         // Credit reward
         if (reward.type === 'VEs') {
@@ -133,7 +140,8 @@ export const apiService = {
           winningIndex,
           reward,
           availableSpins: MOCK_STATE.availableSpins,
-          spinsTaken: MOCK_STATE.spinsTaken,
+          spinsTaken: MOCK_STATE.consecutiveWins,
+          consecutiveWins: MOCK_STATE.consecutiveWins,
           balances: { ...MOCK_STATE.balances }
         });
       }, 500);

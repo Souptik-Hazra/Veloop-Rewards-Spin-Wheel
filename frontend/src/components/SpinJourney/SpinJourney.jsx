@@ -14,13 +14,13 @@ const SpinJourney = ({ spinsTaken = 0, totalMilestone = 3, onClaimBonus, isClaim
             <Compass size={16} className={styles.icon} />
           </div>
           <div>
-            <h3 className={styles.journeyTitle}>SPIN JOURNEY</h3>
-            <span className={styles.journeySubtitle}>Complete 3 spins to unlock a mystery reward</span>
+            <h3 className={styles.journeyTitle}>WIN STREAK JOURNEY</h3>
+            <span className={styles.journeySubtitle}>Win 3 consecutive spins to unlock a free bonus spin</span>
           </div>
         </div>
         <div className={styles.progressPill}>
           <Sparkles size={13} className={styles.pillSparkle} />
-          <span>{Math.min(spinsTaken, totalMilestone)} / {totalMilestone}</span>
+          <span>{Math.min(spinsTaken, totalMilestone)} / {totalMilestone} Wins</span>
         </div>
       </div>
       
@@ -58,7 +58,7 @@ const SpinJourney = ({ spinsTaken = 0, totalMilestone = 3, onClaimBonus, isClaim
                 </div>
 
                 {/* Step Label */}
-                <span className={styles.nodeLabel}>Spin 0{index + 1}</span>
+                <span className={styles.nodeLabel}>Win 0{index + 1}</span>
               </div>
 
               {/* Connecting Energy Conduit Track */}
@@ -90,7 +90,7 @@ const SpinJourney = ({ spinsTaken = 0, totalMilestone = 3, onClaimBonus, isClaim
             <Gift size={18} className={styles.bonusGiftIcon} />
             {isAllCompleted && <span className={styles.bonusRewardTag}>+1</span>}
           </div>
-          <span className={styles.nodeLabelBonus}>Free Spin</span>
+          <span className={styles.nodeLabelBonus}>Bonus Spin</span>
         </div>
       </div>
 
@@ -103,10 +103,10 @@ const SpinJourney = ({ spinsTaken = 0, totalMilestone = 3, onClaimBonus, isClaim
           </div>
           <div className={styles.bonusTextContent}>
             <div className={styles.bonusTitleRow}>
-              <h4 className={styles.bonusTitle}>Bonus Spin Unlocked!</h4>
+              <h4 className={styles.bonusTitle}>3 Consecutive Wins Unlocked!</h4>
               <span className={styles.freeBadge}>+1 FREE</span>
             </div>
-            <p className={styles.bonusDesc}>You've completed today's journey. Enjoy your free bonus spin!</p>
+            <p className={styles.bonusDesc}>You've conquered the 3-win streak! Enjoy your free bonus spin.</p>
           </div>
           <button 
             className={styles.bonusBtn} 

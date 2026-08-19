@@ -36,8 +36,8 @@
 - **Contextual Soundscapes**:
   - 🎯 **Tactile Pin Ticks**: Dual-layered transient click + metallic snap.
   - 🔒 **Mechanical Stop**: Solid lock-in latch click.
-  - 🏆 **Win Confirmation**: 3-note harmonic crystal arpeggio ($A_5 \to C\#_6 \to E_6$).
-  - 🥺 **Miss / No Reward**: Gentle, sympathetic soft chord ($A_4 \to G_4 \to F_4$).
+  - 🏆 **Win Confirmation**: 3-note harmonic crystal arpeggio (`A5 → C#6 → E6`).
+  - 🥺 **Miss / No Reward**: Gentle, sympathetic soft chord (`A4 → G4 → F4`).
   - ⚠️ **Empty Spin Tap**: Soft double-thud on 0 spins.
   - 📑 **Tab Switch**: Crisp UI micro-click.
 
