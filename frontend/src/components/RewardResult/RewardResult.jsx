@@ -13,19 +13,19 @@ const RewardResult = ({ showResult, wonReward, availableSpins, closeResult, styl
       aria-live="assertive"
     >
       <SuccessCelebration isActive={wonReward?.type !== 'None'} />
-      <div className={styles.modalContent}>
+      <div className={`${styles.modalContent} ${styles[`rarity${wonReward?.rarity ? wonReward.rarity.charAt(0).toUpperCase() + wonReward.rarity.slice(1) : 'Common'}`]}`}>
         <div className={styles.modalIcon} aria-hidden="true">{wonReward?.icon}</div>
         
         {wonReward?.type !== 'None' ? (
           <>
             <h2 id="modal-title" className={styles.modalTitle}>Reward Unlocked</h2>
-            <div id="modal-desc" className={styles.modalReward}>+ {wonReward?.label}</div>
+            <div id="modal-desc" className={`${styles.modalReward} ${styles[`rarity${wonReward?.rarity ? wonReward.rarity.charAt(0).toUpperCase() + wonReward.rarity.slice(1) : 'Common'}`]}`}>+ {wonReward?.label}</div>
             <p className={styles.modalDesc}>Your spin reward has been recorded.</p>
           </>
         ) : (
           <>
             <h2 id="modal-title" className={styles.modalTitle}>No Reward</h2>
-            <div id="modal-desc" className={styles.modalReward} style={{color: '#E0E6ED'}}>Better luck next time.</div>
+            <div id="modal-desc" className={`${styles.modalReward} ${styles.rarityCommon}`}>Better luck next time.</div>
             <p className={styles.modalDesc}>Keep completing tasks to earn more spins.</p>
           </>
         )}

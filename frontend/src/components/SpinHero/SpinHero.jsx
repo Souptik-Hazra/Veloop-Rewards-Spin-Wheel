@@ -1,5 +1,6 @@
 import React from 'react';
 import Tooltip from '../Tooltip/Tooltip';
+import WaysToEarn from '../WaysToEarn/WaysToEarn';
 
 const SpinHero = ({ availableSpins, styles }) => {
   return (
@@ -30,32 +31,8 @@ const SpinHero = ({ availableSpins, styles }) => {
           )}
         </div>
       </div>
-
-      <div className={styles.waysToEarnCard}>
-        <h3 className={styles.waysToEarnTitle}>Ways to Get More Spins</h3>
-        <ul className={styles.waysToEarnList}>
-          <li>
-            <div className={styles.waysToEarnIconWrapper}>✓</div>
-            <div className={styles.waysToEarnText}>
-              <strong>Complete eligible tasks</strong>
-              <span>Finish daily activities</span>
-            </div>
-          </li>
-          <li>
-            <div className={styles.waysToEarnIconWrapper}>🎁</div>
-            <div className={styles.waysToEarnText}>
-              <strong>Earn rewards</strong>
-              <span>Convert points to spins</span>
-            </div>
-          </li>
-          <li className={styles.waysToEarnUpcoming}>
-            <div className={styles.waysToEarnIconWrapper} style={{filter: 'grayscale(1)'}}>👥</div>
-            <div className={styles.waysToEarnText}>
-              <strong>Referral activity</strong>
-              <span className={styles.upcomingBadge}>Upcoming</span>
-            </div>
-          </li>
-        </ul>
+      <div style={{ marginTop: '1.5rem' }}>
+        <WaysToEarn />
       </div>
     </>
   );

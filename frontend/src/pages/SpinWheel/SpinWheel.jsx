@@ -5,6 +5,8 @@ import SpinHero from '../../components/SpinHero/SpinHero';
 import RewardPreview from '../../components/RewardPreview/RewardPreview';
 import SpinRules from '../../components/SpinRules/SpinRules';
 import RewardResult from '../../components/RewardResult/RewardResult';
+import SpinJourney from '../../components/SpinJourney/SpinJourney';
+import SpinHistory from '../../components/SpinHistory/SpinHistory';
 import { ChevronLeft, AlertTriangle, ShieldCheck } from 'lucide-react';
 
 import { REWARDS } from '../../config/constants';
@@ -12,6 +14,7 @@ import { apiService } from '../../services/apiService';
 
 const SpinWheel = () => {
   const [availableSpins, setAvailableSpins] = useState(5);
+  const [spinsTaken, setSpinsTaken] = useState(1);
   const [isSpinning, setIsSpinning] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [wonReward, setWonReward] = useState(null);
@@ -64,12 +67,32 @@ const SpinWheel = () => {
   const handleSpinComplete = (reward) => {
     setWonReward(reward);
     setAvailableSpins(prev => Math.max(0, prev - 1));
+    setSpinsTaken(prev => prev + 1);
     setShowResult(true);
   };
 
   const closeResult = () => {
     setShowResult(false);
     setWonReward(null);
+  };
+
+  const [isClaimingBonus, setIsClaimingBonus] = useState(false);
+
+  const handleClaimBonus = async () => {
+    if (isClaimingBonus) return;
+    setIsClaimingBonus(true);
+    try {
+      // Simulate backend API call to claim bonus
+      // e.g. await apiService.claimBonusSpin();
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      setAvailableSpins(prev => prev + 1);
+      setSpinsTaken(0);
+    } catch (err) {
+      console.error("Failed to claim bonus", err);
+    } finally {
+      setIsClaimingBonus(false);
+    }
   };
 
   if (isLoading) {
@@ -133,6 +156,15 @@ const SpinWheel = () => {
             <div className={styles.trustBadge}>
               <ShieldCheck size={16} /> 100% Fair Spin & Secure
             </div>
+            
+            <div style={{marginTop: '2rem', width: '100%', display: 'flex', justifyContent: 'center'}}>
+              <SpinJourney 
+                spinsTaken={spinsTaken} 
+                totalMilestone={3}
+                onClaimBonus={handleClaimBonus}
+                isClaimingBonus={isClaimingBonus}
+              />
+            </div>
           </div>
         )}
 
@@ -141,6 +173,10 @@ const SpinWheel = () => {
 
       <RewardPreview rewards={REWARDS} styles={styles} />
       <SpinRules styles={styles} />
+      
+      <div className={styles.bottomWidgetsGrid}>
+        <SpinHistory />
+      </div>
       
       <footer className={styles.footer}>
         <div className={styles.footerText}>
