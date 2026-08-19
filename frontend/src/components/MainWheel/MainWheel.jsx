@@ -68,14 +68,6 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
         {isSpinning && <SpinLoader />}
         
         <div className={styles.wheelOuter}>
-          {disabled && !isSpinning && (
-            <div className={styles.lockOverlay}>
-              <div className={styles.lockIconWrapper}>
-                <Lock size={32} />
-              </div>
-            </div>
-          )}
-          
           <div 
             className={styles.wheelInner}
             style={{ 
@@ -85,6 +77,17 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
           >
             {/* Subtle lighting overlay to add physical depth */}
             <div className={styles.wheelOverlay}></div>
+
+            {disabled && !isSpinning && (
+              <div className={styles.lockOverlay}>
+                <div 
+                  className={styles.lockIconWrapper} 
+                  style={{ '--lock-rotation': `${-rotation}deg` }}
+                >
+                  <Lock size={32} />
+                </div>
+              </div>
+            )}
 
             {rewards.map((reward, index) => {
               const rotationAngle = (index * segmentAngle) + (segmentAngle / 2);

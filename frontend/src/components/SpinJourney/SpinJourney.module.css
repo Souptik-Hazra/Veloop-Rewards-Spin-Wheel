@@ -170,6 +170,7 @@
   z-index: 1;
   width: 48px;
   height: 48px;
+  flex-shrink: 0;
   background: linear-gradient(145deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));
   border: 1px solid rgba(212,175,55,0.4);
   border-radius: 50%;
@@ -246,8 +247,38 @@
   to { transform: rotate(360deg); }
 }
 
+@media (max-width: 768px) {
+  .journeyContainer {
+    margin-bottom: 0.5rem;
+  }
+}
+
 @media (max-width: 480px) {
+  .journeyContainer {
+    margin-bottom: 0.5rem;
+    padding: 1rem 0.5rem;
+  }
+  .timeline {
+    padding-bottom: 0.5rem;
+  }
+  .node {
+    min-width: 45px;
+    gap: 0.25rem;
+  }
+  .lineWrapper {
+    min-width: 20px;
+    margin: 0 2px;
+  }
   .nodeLabel {
     font-size: 0.65rem;
+  }
+  .bonusUnlockedCard {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+  .bonusBtn {
+    width: 100%;
   }
 }

@@ -18,7 +18,9 @@ const SpinWheel = () => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [wonReward, setWonReward] = useState(null);
+  const [balances, setBalances] = useState(null);
   const [isTitleHidden, setIsTitleHidden] = useState(false);
+  const [activeTab, setActiveTab] = useState('prizes');
 
   // Loading and Error states
   const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +45,7 @@ const SpinWheel = () => {
     try {
       const data = await apiService.getUserData();
       setAvailableSpins(data.availableSpins);
+      setBalances(data.balances);
     } catch {
       setHasError(true);
     } finally {
@@ -66,8 +69,28 @@ const SpinWheel = () => {
 
   const handleSpinComplete = (reward) => {
     setWonReward(reward);
-    setAvailableSpins(prev => Math.max(0, prev - 1));
     setSpinsTaken(prev => prev + 1);
+    
+    // Deduct the spin we just took
+    setAvailableSpins(prev => Math.max(0, prev - 1));
+
+    // Update local balances optimistically
+    if (reward && reward.type !== 'None' && balances) {
+      setBalances(prevBalances => {
+        const newBalances = { ...prevBalances };
+        if (reward.type === 'VEs') newBalances.ves += reward.value;
+        if (reward.type === 'Gems') newBalances.gems += reward.value;
+        if (reward.type === 'XP') newBalances.xp += reward.value;
+        if (reward.type === 'RS') newBalances.giftCard += reward.value;
+        return newBalances;
+      });
+      
+      // If they won a free spin, add it to their available spins
+      if (reward.type === 'Spin') {
+        setAvailableSpins(prev => prev + reward.value);
+      }
+    }
+    
     setShowResult(true);
   };
 
@@ -157,7 +180,7 @@ const SpinWheel = () => {
               <ShieldCheck size={16} /> 100% Fair Spin & Secure
             </div>
             
-            <div style={{marginTop: '2rem', width: '100%', display: 'flex', justifyContent: 'center'}}>
+            <div style={{marginTop: '1rem', width: '100%', display: 'flex', justifyContent: 'center'}}>
               <SpinJourney 
                 spinsTaken={spinsTaken} 
                 totalMilestone={3}
@@ -168,14 +191,42 @@ const SpinWheel = () => {
           </div>
         )}
 
-        <SpinHero availableSpins={availableSpins} styles={styles} />
+        <SpinHero 
+          availableSpins={availableSpins} 
+          balances={balances}
+          styles={styles} 
+        />
       </div>
 
-      <RewardPreview rewards={REWARDS} styles={styles} />
-      <SpinRules styles={styles} />
-      
-      <div className={styles.bottomWidgetsGrid}>
-        <SpinHistory />
+      <div className={styles.tabsContainer}>
+        <button 
+          className={`${styles.tabBtn} ${activeTab === 'prizes' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('prizes')}
+        >
+          Prizes
+        </button>
+        <button 
+          className={`${styles.tabBtn} ${activeTab === 'rules' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('rules')}
+        >
+          How It Works
+        </button>
+        <button 
+          className={`${styles.tabBtn} ${activeTab === 'activity' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('activity')}
+        >
+          Activity
+        </button>
+      </div>
+
+      <div className={styles.tabContentArea}>
+        {activeTab === 'prizes' && <RewardPreview rewards={REWARDS} styles={styles} />}
+        {activeTab === 'rules' && <SpinRules styles={styles} />}
+        {activeTab === 'activity' && (
+          <div className={styles.bottomWidgetsGrid}>
+            <SpinHistory />
+          </div>
+        )}
       </div>
       
       <footer className={styles.footer}>

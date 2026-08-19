@@ -12,7 +12,15 @@ export const apiService = {
         if (Math.random() < 0.05) {
           reject(new Error("Network Error"));
         } else {
-          resolve({ availableSpins: 5 });
+          resolve({ 
+            availableSpins: 5,
+            balances: {
+              gems: 150,
+              ves: 1200,
+              giftCard: 250,
+              xp: 4500
+            }
+          });
         }
       }, 1200);
     });

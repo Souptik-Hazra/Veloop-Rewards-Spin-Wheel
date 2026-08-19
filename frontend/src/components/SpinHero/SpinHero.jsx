@@ -1,11 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Tooltip from '../Tooltip/Tooltip';
 import WaysToEarn from '../WaysToEarn/WaysToEarn';
+import WalletBalances from '../WalletBalances/WalletBalances';
 
-const SpinHero = ({ availableSpins, styles }) => {
+const SpinHero = ({ availableSpins, balances, styles }) => {
+  const [activeTab, setActiveTab] = useState('available');
+
   return (
-    <>
-      <div className={styles.heroCard}>
+    <div style={{ gridArea: 'hero' }}>
+      <div className={styles.heroMobileTabs}>
+        <button 
+          className={`${styles.heroMobileTabBtn} ${activeTab === 'available' ? styles.heroMobileTabActive : ''}`}
+          onClick={() => setActiveTab('available')}
+        >
+          Spins
+        </button>
+        <button 
+          className={`${styles.heroMobileTabBtn} ${activeTab === 'inventory' ? styles.heroMobileTabActive : ''}`}
+          onClick={() => setActiveTab('inventory')}
+        >
+          Inventory
+        </button>
+        <button 
+          className={`${styles.heroMobileTabBtn} ${activeTab === 'ways' ? styles.heroMobileTabActive : ''}`}
+          onClick={() => setActiveTab('ways')}
+        >
+          Earn More
+        </button>
+      </div>
+
+      <div className={`${styles.heroCard} ${activeTab === 'available' ? styles.showOnMobile : styles.hideOnMobile}`}>
         <div className={styles.heroText}>
           <h2 style={{ display: 'flex', alignItems: 'center' }}>
             Available Spins 
@@ -31,10 +55,15 @@ const SpinHero = ({ availableSpins, styles }) => {
           )}
         </div>
       </div>
-      <div style={{ marginTop: '1.5rem' }}>
+      
+      <div className={`${styles.inventoryWrapper} ${activeTab === 'inventory' ? styles.showOnMobile : styles.hideOnMobile}`}>
+        <WalletBalances balances={balances} />
+      </div>
+
+      <div className={`${styles.waysWrapper} ${activeTab === 'ways' ? styles.showOnMobile : styles.hideOnMobile}`}>
         <WaysToEarn />
       </div>
-    </>
+    </div>
   );
 };
 

@@ -97,13 +97,69 @@
 .mainLayout {
   display: grid;
   grid-template-columns: 1fr 400px;
-  grid-template-rows: max-content max-content 1fr;
   grid-template-areas: 
-    "wheel hero"
-    "wheel ways"
-    "wheel .";
+    "wheel hero";
   align-items: start;
   gap: 1.5rem;
+}
+
+/* Tabs Navigation */
+.tabsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 auto 1.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 30px;
+  width: fit-content;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.tabsContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.tabBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tabBtn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.activeTab {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+  color: var(--gold-primary);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+}
+
+.tabContentArea {
+  min-height: 400px;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 
@@ -115,7 +171,7 @@
   backdrop-filter: none; /* Removed blur per user request */
   border: none;
   border-radius: 24px;
-  padding: 1.5rem;
+  padding: 1.5rem 1.5rem 0 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -163,9 +219,61 @@
   }
 }
 
+/* Hero Mobile Tabs */
+.heroMobileTabs {
+  display: none;
+}
+
+.waysWrapper,
+.inventoryWrapper {
+  margin-top: 1rem;
+}
+
+@media (max-width: 992px) {
+  .heroMobileTabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 30px;
+    padding: 0.5rem;
+    width: 100%;
+  }
+
+  .heroMobileTabBtn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .heroMobileTabActive {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+    color: var(--gold-primary);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+  }
+
+  .hideOnMobile {
+    display: none !important;
+  }
+
+  .showOnMobile {
+    animation: fadeIn 0.4s ease-out;
+    width: 100%;
+  }
+}
+
 /* Hero & Balance Card */
 .heroCard {
-  grid-area: hero;
   background: 
     radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
     var(--glass-bg);
@@ -327,21 +435,21 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .previewCard {
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.02) 100%);
   border: 1px solid rgba(212, 175, 55, 0.15);
   border-radius: 16px;
-  padding: 1.5rem 1rem;
+  padding: 1.25rem 0.75rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   transition: all 0.3s ease;
-  width: 180px;
+  width: 140px;
   flex: 0 0 auto;
 }
 
@@ -353,13 +461,13 @@
 }
 
 .previewIcon {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
 }
 
 .previewLabel {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-primary);
   text-align: center;
@@ -627,8 +735,7 @@
 
 @media (max-width: 768px) {
   .pageContainer {
-    /* Huge padding to forcefully push the boxes inward on phones */
-    padding: 1.5rem 2.5rem !important; 
+    padding: 1.5rem 1rem !important; 
   }
   .header {
     margin-bottom: 1.5rem;
@@ -636,7 +743,11 @@
   .mainLayout {
     gap: 1.5rem;
   }
-  .wheelSection, .fullWidthWidget {
+  .wheelSection {
+    padding: 1.5rem 1.5rem 0 1.5rem;
+    border-radius: 20px;
+  }
+  .fullWidthWidget {
     padding: 1.5rem;
     border-radius: 20px;
   }
