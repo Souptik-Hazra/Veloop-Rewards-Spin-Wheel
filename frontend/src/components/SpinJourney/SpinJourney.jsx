@@ -97,12 +97,15 @@ const SpinJourney = ({ spinsTaken = 0, totalMilestone = 3, onClaimBonus, isClaim
       {/* Celebration Card when Milestone Reached */}
       {isAllCompleted && (
         <div className={styles.bonusUnlockedCard}>
-          <div className={styles.bonusGlowBg}></div>
+          <div className={styles.bonusShimmerLine}></div>
           <div className={styles.bonusIconWrapper}>
-            <Gift size={24} className={styles.bonusIcon} />
+            <Gift size={22} className={styles.bonusIcon} />
           </div>
           <div className={styles.bonusTextContent}>
-            <h4 className={styles.bonusTitle}>Bonus Spin Unlocked!</h4>
+            <div className={styles.bonusTitleRow}>
+              <h4 className={styles.bonusTitle}>Bonus Spin Unlocked!</h4>
+              <span className={styles.freeBadge}>+1 FREE</span>
+            </div>
             <p className={styles.bonusDesc}>You've completed today's journey. Enjoy your free bonus spin!</p>
           </div>
           <button 
@@ -114,7 +117,7 @@ const SpinJourney = ({ spinsTaken = 0, totalMilestone = 3, onClaimBonus, isClaim
               <Loader2 size={16} className={styles.spinner} />
             ) : (
               <>
-                <Sparkles size={16} /> Play Now
+                <Sparkles size={15} /> Play Now
               </>
             )}
           </button>

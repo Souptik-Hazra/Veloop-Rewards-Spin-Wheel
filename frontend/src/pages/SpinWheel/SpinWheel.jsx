@@ -9,10 +9,11 @@ import SpinJourney from '../../components/SpinJourney/SpinJourney';
 import SpinHistory from '../../components/SpinHistory/SpinHistory';
 import WalletBalances from '../../components/WalletBalances/WalletBalances';
 import WaysToEarn from '../../components/WaysToEarn/WaysToEarn';
-import { ChevronLeft, AlertTriangle, ShieldCheck, Sparkles, Coins, Calendar, CalendarDays } from 'lucide-react';
+import { ChevronLeft, AlertTriangle, ShieldCheck, Sparkles, Coins, Calendar, CalendarDays, Volume2, VolumeX } from 'lucide-react';
 
 import { REWARDS } from '../../config/constants';
 import { apiService } from '../../services/apiService';
+import { soundFX } from '../../utils/audioService';
 
 const SpinWheel = () => {
   const [availableSpins, setAvailableSpins] = useState(5);
@@ -23,6 +24,29 @@ const SpinWheel = () => {
   const [balances, setBalances] = useState(null);
   const [isTitleHidden, setIsTitleHidden] = useState(false);
   const [activeTab, setActiveTab] = useState(typeof window !== 'undefined' && window.innerWidth > 992 ? 'rules' : 'prizes');
+  const [isMuted, setIsMuted] = useState(soundFX.getMuted());
+
+  // Subscribe to audio mute changes and clean up active audio on unmount
+  useEffect(() => {
+    const unsubscribe = soundFX.subscribe(muted => setIsMuted(muted));
+    return () => {
+      unsubscribe();
+      soundFX.stopAll();
+    };
+  }, []);
+
+  const handleToggleMute = () => {
+    const newMuted = soundFX.toggleMute();
+    setIsMuted(newMuted);
+    if (!newMuted) {
+      soundFX.playInteractionTap();
+    }
+  };
+
+  const handleTabChange = (tabId) => {
+    soundFX.playTabSwitch();
+    setActiveTab(tabId);
+  };
 
   // Daily Bonus & Timer States
   const [dailyBonus, setDailyBonus] = useState({
@@ -165,6 +189,7 @@ const SpinWheel = () => {
     try {
       const response = await apiService.claimDailyBonus();
       if (response && response.success) {
+        soundFX.playInteractionTap();
         setAvailableSpins(response.availableSpins);
         setDailyBonus(prev => ({
           ...prev,
@@ -187,6 +212,7 @@ const SpinWheel = () => {
     try {
       const response = await apiService.claimMilestoneBonus({ milestoneIndex: 3 });
       if (response && response.success) {
+        soundFX.playInteractionTap();
         setAvailableSpins(response.availableSpins);
         setSpinsTaken(response.spinsTaken || 0);
         showNotification(response.message || 'Milestone Bonus Spin Claimed!', 'success');
@@ -276,11 +302,22 @@ const SpinWheel = () => {
       <div className={styles.pageContainer}>
         {/* Header */}
         <header className={styles.header}>
-        <button className={styles.backBtn} aria-label="Go back">
-          <ChevronLeft size={24} />
-        </button>
-        <h1 className={styles.headerTitle}>Spin The Wheel</h1>
-      </header>
+          <div className={styles.headerLeftGroup}>
+            <button className={styles.backBtn} aria-label="Go back">
+              <ChevronLeft size={24} />
+            </button>
+            <h1 className={styles.headerTitle}>Spin The Wheel</h1>
+          </div>
+          
+          <button 
+            className={`${styles.soundToggleBtn} ${isMuted ? styles.soundMuted : ''}`} 
+            onClick={handleToggleMute}
+            aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+            title={isMuted ? "Unmute Audio" : "Mute Audio"}
+          >
+            {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+          </button>
+        </header>
 
       <div className={styles.mainLayout}>
         {hasError ? (
@@ -424,31 +461,31 @@ const SpinWheel = () => {
       <div className={styles.tabsContainer}>
         <button 
           className={`${styles.tabBtn} ${styles.mobileOnlyTab} ${activeTab === 'prizes' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('prizes')}
+          onClick={() => handleTabChange('prizes')}
         >
           Prizes
         </button>
         <button 
           className={`${styles.tabBtn} ${styles.mobileOnlyTab} ${activeTab === 'inventory' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('inventory')}
+          onClick={() => handleTabChange('inventory')}
         >
           Inventory
         </button>
         <button 
           className={`${styles.tabBtn} ${activeTab === 'activity' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('activity')}
+          onClick={() => handleTabChange('activity')}
         >
           Activity
         </button>
         <button 
           className={`${styles.tabBtn} ${activeTab === 'rules' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('rules')}
+          onClick={() => handleTabChange('rules')}
         >
           How It Works
         </button>
         <button 
           className={`${styles.tabBtn} ${activeTab === 'earn' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('earn')}
+          onClick={() => handleTabChange('earn')}
         >
           Get More Spins
         </button>

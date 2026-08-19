@@ -3,6 +3,7 @@ import { Lock } from 'lucide-react';
 import styles from './MainWheel.module.css';
 import SpinLoader from '../SpinLoader/SpinLoader';
 import WheelPointer from '../WheelPointer/WheelPointer';
+import { soundFX } from '../../utils/audioService';
 
 // Premium Fintech metallic segments - Distinct medium-dark slate (visible but not white)
 const segmentColors = ['#334155', '#1E293B', '#475569'];
@@ -33,29 +34,72 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
     setIsSpinning(true);
 
     try {
-      // 1. Get the pre-determined result from the parent / backend
+      // Ensure audio context is ready on user click
+      await soundFX.ensureAudioContext();
+
+      // 1. Get the pre-determined result from backend
       const winningIndex = await onSpinRequest();
 
-      // 2. Calculate the target rotation based on the winning index
-      // Smooth, premium spin (not infinitely spinning, just a long smooth physical rotation)
+      // 2. Calculate target rotation
       const extraRotations = 5 * 360; 
-      
-      // The pointer is at the top (0 degrees).
       const segmentCenter = (winningIndex * segmentAngle) + (segmentAngle / 2);
       const targetAngle = 360 - segmentCenter;
-      
-      const finalRotation = rotation + extraRotations + targetAngle + (360 - (rotation % 360));
+      const startRot = rotation;
+      const finalRotation = startRot + extraRotations + targetAngle + (360 - (startRot % 360));
 
       setRotation(finalRotation);
 
+      // 3. Frame-perfect segment pin tracking via requestAnimationFrame
+      const duration = 4000;
+      const startTime = performance.now();
+      let lastPinCrossed = Math.floor(startRot / segmentAngle);
+
+      const trackSpinPhysics = (now) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        
+        // Easing curve matching CSS cubic-bezier(0.1, 0.7, 0.1, 1)
+        const ease = 1 - Math.pow(1 - progress, 3.2);
+        const currentAngle = startRot + (finalRotation - startRot) * ease;
+
+        const currentPin = Math.floor(currentAngle / segmentAngle);
+        if (currentPin > lastPinCrossed) {
+          const speedMultiplier = 1.0 + (1 - progress) * 0.25;
+          soundFX.playTactileTick(speedMultiplier);
+          lastPinCrossed = currentPin;
+        }
+
+        if (progress < 1) {
+          requestAnimationFrame(trackSpinPhysics);
+        } else {
+          soundFX.playMechanicalStop();
+        }
+      };
+
+      requestAnimationFrame(trackSpinPhysics);
+
       setTimeout(() => {
         setIsSpinning(false);
-        onSpinComplete(rewards[winningIndex]);
+        const won = rewards[winningIndex];
+        if (won && won.type !== 'None') {
+          soundFX.playRewardConfirmation();
+        } else {
+          soundFX.playMissTone();
+        }
+        onSpinComplete(won);
       }, 4000);
     } catch {
-      // Handle the error visually, reset spinning state
+      // Handle error, reset spinning state
       setIsSpinning(false);
     }
+  };
+
+  const handleCenterClick = () => {
+    if (disabled && !isSpinning) {
+      soundFX.playEmptyTap();
+      return;
+    }
+    spin();
   };
 
   return (
@@ -68,16 +112,23 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
         {isSpinning && <SpinLoader />}
         
         <div className={styles.wheelOuter}>
-          {/* Lightbulb Marquee Dots */}
-          {Array.from({ length: 24 }).map((_, i) => (
-            <div 
-              key={`dot-${i}`}
-              className={styles.lightbulbWrapper}
-              style={{ transform: `rotate(${i * 15}deg)` }}
-            >
-              <div className={styles.lightbulb} />
-            </div>
-          ))}
+          {/* Rotating Outer Rim Lightbulbs */}
+          <div 
+            className={styles.rimLightsContainer}
+            style={{ 
+              transform: `rotate(${rotation}deg)`
+            }}
+          >
+            {Array.from({ length: 24 }).map((_, i) => (
+              <div 
+                key={`dot-${i}`}
+                className={styles.lightbulbWrapper}
+                style={{ transform: `rotate(${i * 15}deg)` }}
+              >
+                <div className={`${styles.lightbulb} ${isSpinning ? styles.lightbulbSpinning : ''}`} />
+              </div>
+            ))}
+          </div>
 
           <div 
             className={styles.wheelInner}
@@ -137,8 +188,8 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
           {/* Brushed Metal Center Button */}
           <button 
             className={styles.wheelCenter} 
-            onClick={spin}
-            disabled={disabled || isSpinning}
+            onClick={handleCenterClick}
+            disabled={isSpinning}
           >
             <div className={styles.centerInner}>
               <span className={styles.spinText}>{isSpinning ? '...' : 'SPIN'}</span>
