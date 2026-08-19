@@ -68,6 +68,17 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
         {isSpinning && <SpinLoader />}
         
         <div className={styles.wheelOuter}>
+          {/* Lightbulb Marquee Dots */}
+          {Array.from({ length: 24 }).map((_, i) => (
+            <div 
+              key={`dot-${i}`}
+              className={styles.lightbulbWrapper}
+              style={{ transform: `rotate(${i * 15}deg)` }}
+            >
+              <div className={styles.lightbulb} />
+            </div>
+          ))}
+
           <div 
             className={styles.wheelInner}
             style={{ 
@@ -95,11 +106,8 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
               const textColor = index % 2 === 0 ? '#D4AF37' : '#E0E6ED';
               
               // Text upright correction
-              // If the segment's base angle falls between 90° and 270° (the bottom half of the wheel),
-              // it renders upside-down because it's rotated outwards. We counter-rotate it by 180°.
               const isBottomHalf = rotationAngle > 90 && rotationAngle < 270;
               const contentRotation = isBottomHalf ? 180 : 0;
-              // When flipped 180°, we also flip flex-direction so the icon stays near the center.
               const flexDirection = isBottomHalf ? 'column' : 'column-reverse';
 
               return (
@@ -110,7 +118,6 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
                     transform: `rotate(${rotationAngle}deg)`
                   }}
                 >
-                  {/* Text rotates outwards. Solid elegant colors. Upright text correction. */}
                   <div 
                     className={styles.segmentContent}
                     style={{ 

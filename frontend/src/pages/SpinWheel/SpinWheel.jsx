@@ -166,7 +166,7 @@ const SpinWheel = () => {
                 pointerEvents: isTitleHidden ? 'none' : 'auto'
               }}
             >
-              Spin. Discover. Get Rewarded.
+              SPIN. DISCOVER. GET REWARDED.
             </h2>
             <MainWheel 
               rewards={REWARDS.map(r => ({ label: r.wheelLabel, icon: r.icon, color: r.color, ...r }))}
