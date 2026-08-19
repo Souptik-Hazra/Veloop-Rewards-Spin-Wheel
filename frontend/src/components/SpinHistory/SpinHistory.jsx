@@ -1,56 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './SpinHistory.module.css';
 import { ChevronLeft, ChevronRight, Calendar, Loader2, History } from 'lucide-react';
-
-// --- MOCK BACKEND SERVICE ---
-// This simulates an API call to a backend database.
-// Ready to be replaced by a real fetch/axios call to your backend.
-
-const MOCK_MONTHS = ['August 2026', 'July 2026', 'June 2026'];
-const MOCK_DB = (() => {
-  const data = [];
-  const rewards = ['+ 50 VEs', '+ 2 Gems', '+ 10 XP', 'Gift Card ₹5', 'No Reward'];
-  let id = 1;
-  MOCK_MONTHS.forEach(month => {
-    const count = Math.floor(Math.random() * 4) + 12; // 12-15 items per month
-    for (let i = 0; i < count; i++) {
-      const reward = rewards[Math.floor(Math.random() * rewards.length)];
-      data.push({
-        id: id++,
-        reward: reward,
-        type: reward === 'No Reward' ? 'Better luck next time' : 'Spin Reward',
-        time: `${month.split(' ')[0]} ${Math.floor(Math.random() * 28) + 1} · ${Math.floor(Math.random() * 12) + 1}:${Math.floor(Math.random() * 50) + 10} PM`,
-        month: month
-      });
-    }
-  });
-  return data;
-})();
-
-// Simulated API endpoint
-const fetchSpinHistoryAPI = async (month, page, limit) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const filteredData = MOCK_DB.filter(item => item.month === month);
-      const totalItems = filteredData.length;
-      const totalPages = Math.ceil(totalItems / limit);
-      
-      const start = (page - 1) * limit;
-      const paginatedItems = filteredData.slice(start, start + limit);
-      
-      resolve({
-        data: paginatedItems,
-        meta: {
-          currentPage: page,
-          totalPages: totalPages,
-          totalItems: totalItems,
-          availableMonths: MOCK_MONTHS
-        }
-      });
-    }, 600); // 600ms network delay simulation
-  });
-};
-// -----------------------------
+import { apiService } from '../../services/apiService';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -61,7 +12,7 @@ const SpinHistory = () => {
   // Backend-ready states
   const [historyItems, setHistoryItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [availableMonths, setAvailableMonths] = useState(MOCK_MONTHS);
+  const [availableMonths, setAvailableMonths] = useState(['August 2026', 'July 2026', 'June 2026']);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch data whenever month or page changes
@@ -71,14 +22,20 @@ const SpinHistory = () => {
 
     const loadData = async () => {
       try {
-        // In the future, replace this with your real API call:
-        // const response = await api.get(`/spin-history?month=${selectedMonth}&page=${currentPage}&limit=${ITEMS_PER_PAGE}`);
-        const response = await fetchSpinHistoryAPI(selectedMonth, currentPage, ITEMS_PER_PAGE);
+        const response = await apiService.getSpinHistory({
+          month: selectedMonth,
+          page: currentPage,
+          limit: ITEMS_PER_PAGE
+        });
         
-        if (isMounted) {
-          setHistoryItems(response.data);
-          setTotalPages(response.meta.totalPages);
-          setAvailableMonths(response.meta.availableMonths);
+        if (isMounted && response) {
+          setHistoryItems(response.data || []);
+          if (response.meta) {
+            setTotalPages(response.meta.totalPages || 1);
+            if (response.meta.availableMonths) {
+              setAvailableMonths(response.meta.availableMonths);
+            }
+          }
         }
       } catch (error) {
         console.error("Failed to fetch spin history:", error);

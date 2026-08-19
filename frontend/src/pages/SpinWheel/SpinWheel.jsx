@@ -7,7 +7,9 @@ import SpinRules from '../../components/SpinRules/SpinRules';
 import RewardResult from '../../components/RewardResult/RewardResult';
 import SpinJourney from '../../components/SpinJourney/SpinJourney';
 import SpinHistory from '../../components/SpinHistory/SpinHistory';
-import { ChevronLeft, AlertTriangle, ShieldCheck } from 'lucide-react';
+import WalletBalances from '../../components/WalletBalances/WalletBalances';
+import WaysToEarn from '../../components/WaysToEarn/WaysToEarn';
+import { ChevronLeft, AlertTriangle, ShieldCheck, Sparkles, Coins, Calendar, CalendarDays } from 'lucide-react';
 
 import { REWARDS } from '../../config/constants';
 import { apiService } from '../../services/apiService';
@@ -22,9 +24,28 @@ const SpinWheel = () => {
   const [isTitleHidden, setIsTitleHidden] = useState(false);
   const [activeTab, setActiveTab] = useState(typeof window !== 'undefined' && window.innerWidth > 992 ? 'rules' : 'prizes');
 
-  // Loading and Error states
+  // Daily Bonus & Timer States
+  const [dailyBonus, setDailyBonus] = useState({
+    isClaimable: true,
+    resetsInSeconds: 0,
+    bonusSpins: 3
+  });
+  const [countdownSeconds, setCountdownSeconds] = useState(0);
+
+  // Loading, Error and Toast Notification states
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+  const [pendingSpinResult, setPendingSpinResult] = useState(null);
+  const [isClaimingBonus, setIsClaimingBonus] = useState(false);
+  const [isClaimingMilestone, setIsClaimingMilestone] = useState(false);
+
+  const showNotification = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, show: false }));
+    }, 4000);
+  };
 
   useEffect(() => {
     if (isSpinning) {
@@ -37,17 +58,45 @@ const SpinWheel = () => {
     }
   }, [isSpinning]);
 
-  // Simulated API Fetch
+  // Dynamic Countdown Timer
+  useEffect(() => {
+    if (countdownSeconds <= 0) {
+      setDailyBonus(prev => ({ ...prev, isClaimable: true }));
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCountdownSeconds(prev => {
+        if (prev <= 1) {
+          setDailyBonus(d => ({ ...d, isClaimable: true }));
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [countdownSeconds]);
+
+  // Initial API Data Fetch
   const fetchData = async () => {
     setIsLoading(true);
     setHasError(false);
     
     try {
       const data = await apiService.getUserData();
-      setAvailableSpins(data.availableSpins);
-      setBalances(data.balances);
-    } catch {
+      if (data) {
+        setAvailableSpins(data.availableSpins ?? 5);
+        setSpinsTaken(data.spinsTaken ?? 0);
+        setBalances(data.balances || null);
+        if (data.dailyBonus) {
+          setDailyBonus(data.dailyBonus);
+          setCountdownSeconds(data.dailyBonus.resetsInSeconds ?? 45930);
+        }
+      }
+    } catch (err) {
       setHasError(true);
+      showNotification(err.message || 'Unable to connect to backend.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -59,39 +108,50 @@ const SpinWheel = () => {
 
   const handleSpinRequest = async () => {
     try {
-      const { winningIndex } = await apiService.performSpin();
-      return winningIndex;
+      const idempotencyKey = `spin_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const response = await apiService.performSpin({ idempotencyKey });
+      
+      setPendingSpinResult(response);
+      return response.winningIndex;
     } catch (err) {
       setHasError(true);
+      showNotification(err.message || 'Spin failed. Please try again.', 'error');
       throw err;
     }
   };
 
   const handleSpinComplete = (reward) => {
-    setWonReward(reward);
-    setSpinsTaken(prev => prev + 1);
-    
-    // Deduct the spin we just took
-    setAvailableSpins(prev => Math.max(0, prev - 1));
+    if (pendingSpinResult) {
+      setAvailableSpins(pendingSpinResult.availableSpins);
+      setSpinsTaken(pendingSpinResult.spinsTaken);
+      if (pendingSpinResult.balances) {
+        setBalances(pendingSpinResult.balances);
+      }
+      setWonReward(pendingSpinResult.reward || reward);
+    } else {
+      setWonReward(reward);
+      setSpinsTaken(prev => prev + 1);
+      setAvailableSpins(prev => Math.max(0, prev - 1));
 
-    // Update local balances optimistically
-    if (reward && reward.type !== 'None' && balances) {
-      setBalances(prevBalances => {
-        const newBalances = { ...prevBalances };
-        if (reward.type === 'VEs') newBalances.ves += reward.value;
-        if (reward.type === 'Gems') newBalances.gems += reward.value;
-        if (reward.type === 'XP') newBalances.xp += reward.value;
-        if (reward.type === 'RS') newBalances.giftCard += reward.value;
-        return newBalances;
-      });
-      
-      // If they won a free spin, add it to their available spins
-      if (reward.type === 'Spin') {
-        setAvailableSpins(prev => prev + reward.value);
+      // Optimistic balance update
+      if (reward && reward.type !== 'None' && balances) {
+        setBalances(prevBalances => {
+          const newBalances = { ...prevBalances };
+          if (reward.type === 'VEs') newBalances.ves += reward.value;
+          if (reward.type === 'Gems') newBalances.gems += reward.value;
+          if (reward.type === 'XP') newBalances.xp += reward.value;
+          if (reward.type === 'RS') newBalances.giftCard += reward.value;
+          return newBalances;
+        });
+        
+        if (reward.type === 'Spin') {
+          setAvailableSpins(prev => prev + reward.value);
+        }
       }
     }
     
     setShowResult(true);
+    setPendingSpinResult(null);
   };
 
   const closeResult = () => {
@@ -99,24 +159,58 @@ const SpinWheel = () => {
     setWonReward(null);
   };
 
-  const [isClaimingBonus, setIsClaimingBonus] = useState(false);
-
-  const handleClaimBonus = async () => {
+  const handleClaimDailyBonus = async () => {
     if (isClaimingBonus) return;
     setIsClaimingBonus(true);
     try {
-      // Simulate backend API call to claim bonus
-      // e.g. await apiService.claimBonusSpin();
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      setAvailableSpins(prev => prev + 1);
-      setSpinsTaken(0);
+      const response = await apiService.claimDailyBonus();
+      if (response && response.success) {
+        setAvailableSpins(response.availableSpins);
+        setDailyBonus(prev => ({
+          ...prev,
+          isClaimable: false,
+          resetsInSeconds: response.nextResetInSeconds || 86400
+        }));
+        setCountdownSeconds(response.nextResetInSeconds || 86400);
+        showNotification(response.message || 'Claimed 3 Daily Bonus Spins!', 'success');
+      }
     } catch (err) {
-      console.error("Failed to claim bonus", err);
+      showNotification(err.message || 'Failed to claim daily bonus.', 'error');
     } finally {
       setIsClaimingBonus(false);
     }
   };
+
+  const handleClaimMilestone = async () => {
+    if (isClaimingMilestone) return;
+    setIsClaimingMilestone(true);
+    try {
+      const response = await apiService.claimMilestoneBonus({ milestoneIndex: 3 });
+      if (response && response.success) {
+        setAvailableSpins(response.availableSpins);
+        setSpinsTaken(response.spinsTaken || 0);
+        showNotification(response.message || 'Milestone Bonus Spin Claimed!', 'success');
+      }
+    } catch (err) {
+      showNotification(err.message || 'Failed to claim milestone bonus.', 'error');
+    } finally {
+      setIsClaimingMilestone(false);
+    }
+  };
+
+  // Time format helper (HH : MM : SS)
+  const formatTime = (totalSeconds) => {
+    const hrs = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+    return {
+      hrs: hrs.toString().padStart(2, '0'),
+      mins: mins.toString().padStart(2, '0'),
+      secs: secs.toString().padStart(2, '0')
+    };
+  };
+
+  const timer = formatTime(countdownSeconds);
 
   if (isLoading) {
     return (
@@ -139,6 +233,46 @@ const SpinWheel = () => {
 
   return (
     <div className={styles.pageWrapper}>
+      {toast.show && (
+        <div className={styles.toastContainer}>
+          <div className={`${styles.toast} ${toast.type === 'error' ? styles.toastError : styles.toastSuccess}`}>
+            {toast.type === 'error' ? <AlertTriangle size={18} color="#EF4444" /> : <Sparkles size={18} color="#10B981" />}
+            <span>{toast.message}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Dynamic Ambient Background Effects */}
+      <div className={styles.bgEffectsWrapper} aria-hidden="true">
+        <div className={styles.ambientGlowCenter}></div>
+        <div className={styles.ambientGlowTopLeft}></div>
+        <div className={styles.ambientGlowTopRight}></div>
+        <div className={styles.gridOverlay}></div>
+        
+        {/* Floating Stardust & Confetti */}
+        <div className={styles.particlesContainer}>
+          {[...Array(28)].map((_, i) => {
+            const isStar = i % 4 === 0;
+            const isDiamond = i % 4 === 1;
+            const color = i % 3 === 0 ? '#8B5CF6' : i % 3 === 1 ? '#FDE047' : '#EC4899';
+            return (
+              <div 
+                key={i} 
+                className={`${styles.particle} ${isStar ? styles.starParticle : isDiamond ? styles.diamondParticle : styles.dotParticle}`} 
+                style={{
+                  '--x': `${(i * 13.7) % 96 + 2}%`,
+                  '--y': `${(i * 17.3) % 94 + 3}%`,
+                  '--delay': `${(i * 0.7) % 6}s`,
+                  '--duration': `${10 + (i % 6) * 2.5}s`,
+                  '--color': color
+                }}
+              >
+                {isStar ? '✦' : isDiamond ? '◆' : ''}
+              </div>
+            );
+          })}
+        </div>
+      </div>
       <div className={styles.pageContainer}>
         {/* Header */}
         <header className={styles.header}>
@@ -158,49 +292,129 @@ const SpinWheel = () => {
           </div>
         ) : (
           <>
-            <div className={styles.sidebarLeft}>
-              <RewardPreview rewards={REWARDS} />
+            <div className={styles.topHeaderRow}>
+              {/* Top Left: Spins */}
+              <div className={styles.topStatusCard}>
+                <div className={`${styles.topStatusIcon} ${styles.spinsIcon}`}>
+                  <Sparkles size={24} color="#FFF" />
+                </div>
+                <div className={styles.topStatusInfo}>
+                  <span className={styles.topStatusLabel}>YOUR SPINS</span>
+                  <strong className={styles.topStatusValue}>{availableSpins}</strong>
+                  <span className={styles.topStatusSub}>Spins Left</span>
+                </div>
+              </div>
+
+              {/* Title Section */}
+              <div className={styles.titleSection}>
+                <div className={styles.kicker}>
+                  <Sparkles size={14} className={styles.kickerIcon} /> 
+                  SPIN & WIN 
+                  <Sparkles size={14} className={styles.kickerIcon} />
+                </div>
+                <h2 className={styles.wheelTitle}>
+                  SPIN THE <span className={styles.wheelGradientText}>WHEEL</span>
+                </h2>
+                <p className={styles.wheelSubtitle}>Spin the wheel and get exciting rewards!</p>
+              </div>
+
+              {/* Top Right: Balance */}
+              <div className={styles.topStatusCard}>
+                <div className={`${styles.topStatusIcon} ${styles.balanceIcon}`}>
+                  <Coins size={24} color="#FFF" />
+                </div>
+                <div className={styles.topStatusInfo}>
+                  <span className={styles.topStatusLabel}>YOUR BALANCE</span>
+                  <strong className={styles.topStatusValue}>{balances ? balances.coins || balances.ves || 1200 : 1200}</strong>
+                  <span className={styles.topStatusSub}>Coins Available</span>
+                </div>
+              </div>
             </div>
-            <div className={styles.wheelSection}>
-            <h2 
-              className={styles.wheelTitle} 
-              style={{ 
-                opacity: isTitleHidden ? 0 : 1, 
-                transition: 'opacity 0.5s ease',
-                pointerEvents: isTitleHidden ? 'none' : 'auto'
-              }}
-            >
-              SPIN. DISCOVER. GET REWARDED.
-            </h2>
-            <MainWheel 
-              rewards={REWARDS.map(r => ({ label: r.wheelLabel, icon: r.icon, color: r.color, ...r }))}
-              onSpinRequest={handleSpinRequest}
-              onSpinComplete={handleSpinComplete}
-              isSpinning={isSpinning}
-              setIsSpinning={setIsSpinning}
-              disabled={availableSpins === 0}
-            />
-            <div className={styles.trustBadge}>
-              <ShieldCheck size={16} /> 100% Fair Spin & Secure
+
+            <div className={styles.mainContentGrid}>
+              {/* Left Column */}
+              <div className={styles.sidebarLeft}>
+                <RewardPreview rewards={REWARDS} />
+              </div>
+              
+              {/* Center Column */}
+              <div className={styles.wheelSection}>
+                <MainWheel 
+                  rewards={REWARDS.map(r => ({ label: r.wheelLabel, icon: r.icon, color: r.color, ...r }))}
+                  onSpinRequest={handleSpinRequest}
+                  onSpinComplete={handleSpinComplete}
+                  isSpinning={isSpinning}
+                  setIsSpinning={setIsSpinning}
+                  disabled={availableSpins === 0}
+                />
+                <div className={styles.trustBadge}>
+                  <ShieldCheck size={16} /> 100% Fair Spin & Secure
+                </div>
+                
+                <div style={{marginTop: '1.5rem', width: '100%', display: 'flex', justifyContent: 'center'}}>
+                  <SpinJourney 
+                    spinsTaken={spinsTaken} 
+                    totalMilestone={3}
+                    onClaimBonus={handleClaimMilestone}
+                    isClaimingBonus={isClaimingMilestone}
+                  />
+                </div>
+              </div>
+
+              {/* Right Column (Daily Bonus) */}
+              <div className={styles.sidebarRight}>
+                <div className={styles.dailyBonusCard}>
+                  <div className={styles.dailyBonusHeader}>
+                    <Calendar size={18} className={styles.dailyBonusIcon}/>
+                    DAILY BONUS
+                  </div>
+                  <div className={styles.dailyBonusBody}>
+                    <p>
+                      {dailyBonus.isClaimable ? (
+                        <>Claim today for<br/>3 free spins!</>
+                      ) : (
+                        <>Come back tomorrow for<br/>3 more spins!</>
+                      )}
+                    </p>
+                    <div className={styles.dailyBonusImageWrapper}>
+                      <CalendarDays size={64} color="#8B5CF6" />
+                      <div className={styles.floatingCoins}>
+                        <Coins size={24} color="#F59E0B" />
+                      </div>
+                    </div>
+                    <button 
+                      className={`${styles.claimBonusBtn} ${dailyBonus.isClaimable ? styles.claimTodayActive : styles.claimTomorrowDisabled}`}
+                      onClick={handleClaimDailyBonus}
+                      disabled={isClaimingBonus || !dailyBonus.isClaimable}
+                    >
+                      {isClaimingBonus ? 'Claiming...' : (dailyBonus.isClaimable ? 'Claim Today' : 'Claim Tomorrow')}
+                    </button>
+                    <div className={styles.countdownBox}>
+                      <span className={styles.countdownLabel}>
+                        {dailyBonus.isClaimable ? 'Status' : 'Resets in'}
+                      </span>
+                      {dailyBonus.isClaimable ? (
+                        <div className={styles.readyBadge}>
+                          <Sparkles size={16} /> 3 Spins Available
+                        </div>
+                      ) : (
+                        <div className={styles.countdownTimer}>
+                          <div className={styles.timeUnit}><strong>{timer.hrs}</strong><span>HRS</span></div>
+                          <span className={styles.timeSep}>:</span>
+                          <div className={styles.timeUnit}><strong>{timer.mins}</strong><span>MINS</span></div>
+                          <span className={styles.timeSep}>:</span>
+                          <div className={styles.timeUnit}><strong>{timer.secs}</strong><span>SECS</span></div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                <WalletBalances balances={balances} />
+              </div>
             </div>
-            
-            <div style={{marginTop: '1rem', width: '100%', display: 'flex', justifyContent: 'center'}}>
-              <SpinJourney 
-                spinsTaken={spinsTaken} 
-                totalMilestone={3}
-                onClaimBonus={handleClaimBonus}
-                isClaimingBonus={isClaimingBonus}
-              />
-            </div>
-          </div>
           </>
         )}
-
-        <SpinHero 
-          availableSpins={availableSpins} 
-          balances={balances}
-          styles={styles} 
-        />
       </div>
 
       <div className={styles.tabsContainer}>
@@ -211,16 +425,28 @@ const SpinWheel = () => {
           Prizes
         </button>
         <button 
-          className={`${styles.tabBtn} ${activeTab === 'rules' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('rules')}
+          className={`${styles.tabBtn} ${styles.mobileOnlyTab} ${activeTab === 'inventory' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('inventory')}
         >
-          How It Works
+          Inventory
         </button>
         <button 
           className={`${styles.tabBtn} ${activeTab === 'activity' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('activity')}
         >
           Activity
+        </button>
+        <button 
+          className={`${styles.tabBtn} ${activeTab === 'rules' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('rules')}
+        >
+          How It Works
+        </button>
+        <button 
+          className={`${styles.tabBtn} ${activeTab === 'earn' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('earn')}
+        >
+          Get More Spins
         </button>
       </div>
 
@@ -230,7 +456,19 @@ const SpinWheel = () => {
             <RewardPreview rewards={REWARDS} />
           </div>
         )}
+        {activeTab === 'inventory' && (
+          <div className={styles.mobileOnlyContent}>
+            <div className={styles.inventoryTabContainer}>
+              <WalletBalances balances={balances} />
+            </div>
+          </div>
+        )}
         {activeTab === 'rules' && <SpinRules styles={styles} />}
+        {activeTab === 'earn' && (
+          <div className={styles.earnTabContainer}>
+            <WaysToEarn />
+          </div>
+        )}
         {activeTab === 'activity' && (
           <div className={styles.bottomWidgetsGrid}>
             <SpinHistory />
