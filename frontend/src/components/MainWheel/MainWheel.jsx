@@ -42,14 +42,12 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
 
   const spin = async () => {
     if (disabled || isSpinning) return;
+    setIsIntroAnimating(false);
     setIsSpinning(true);
 
     try {
       // Ensure audio context is ready on user click
       await soundFX.ensureAudioContext();
-
-      // Play synchronized 3D Left-to-Right rotation sound sequence
-      soundFX.playIntro3DWhir();
 
       // 1. Get the pre-determined result from backend
       const winningIndex = await onSpinRequest();
@@ -118,7 +116,7 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
 
   return (
     <div className={styles.mainWheelWrapper}>
-      <div className={`${styles.wheelContainer} ${isSpinning || isIntroAnimating ? styles.intro3DSpinLeftToRight : ''}`}>
+      <div className={`${styles.wheelContainer} ${isIntroAnimating ? styles.intro3DSpinLeftToRight : ''}`}>
         {/* Tangible Ticking Pointer Component */}
         <WheelPointer isSpinning={isSpinning} />
 
