@@ -8,7 +8,9 @@
 
 export const API_CONFIG = {
   BASE_URL: import.meta.env.VITE_API_BASE_URL || '/api',
-  USE_MOCK_API: import.meta.env.VITE_USE_MOCK_API === 'true' || false,
+  USE_MOCK_API: import.meta.env.VITE_USE_MOCK_API !== undefined 
+    ? import.meta.env.VITE_USE_MOCK_API === 'true' 
+    : !import.meta.env.VITE_API_BASE_URL,
   TIMEOUT_MS: 15000,
   ENDPOINTS: {
     // User & Account Data

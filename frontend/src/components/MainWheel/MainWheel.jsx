@@ -13,9 +13,6 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
   const [isIntroAnimating, setIsIntroAnimating] = useState(true);
 
   useEffect(() => {
-    // Play synchronized 3D intro whirring sound on navigating to this page
-    soundFX.playIntro3DWhir();
-
     const timer = setTimeout(() => {
       setIsIntroAnimating(false);
     }, 2600);

@@ -26,7 +26,11 @@ class TactileAudioService {
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
-      await this.ctx.resume();
+      try {
+        await this.ctx.resume();
+      } catch {
+        // Autoplay policy safety
+      }
     }
     return this.ctx;
   }
