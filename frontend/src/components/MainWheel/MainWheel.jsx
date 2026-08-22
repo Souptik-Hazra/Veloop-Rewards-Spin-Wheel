@@ -16,7 +16,7 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsIntroAnimating(false);
-    }, 2600);
+    }, 1900);
     return () => {
       clearTimeout(timer);
       if (animFrameRef.current) {
@@ -119,14 +119,14 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
 
   return (
     <div className={styles.mainWheelWrapper}>
-      <div className={`${styles.wheelContainer} ${isIntroAnimating ? styles.intro3DSpinLeftToRight : ''}`}>
+      <div className={styles.wheelContainer}>
         {/* Tangible Ticking Pointer Component */}
         <WheelPointer isSpinning={isSpinning} />
 
         {/* Floating SpinLoader */}
         {isSpinning && <SpinLoader />}
         
-        <div className={styles.wheelOuter}>
+        <div className={`${styles.wheelOuter} ${isIntroAnimating ? styles.intro3DSpinLeftToRight : ''}`}>
           {/* Rotating Outer Rim Lightbulbs */}
           <div 
             className={styles.rimLightsContainer}
