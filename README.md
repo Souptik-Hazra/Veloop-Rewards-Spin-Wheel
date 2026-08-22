@@ -6,33 +6,34 @@
 [![Frontend CI](https://github.com/Souptik-Hazra/Veloop-Rewards-Spin-Wheel/actions/workflows/ci.yml/badge.svg)](https://github.com/Souptik-Hazra/Veloop-Rewards-Spin-Wheel/actions/workflows/ci.yml)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
 
 ## ✨ Key Features
 
-### 🎡 1. Mechanical 3D Spin Wheel
-- **Physical Arcade Experience**: Features alternating dark metallic slate segments, 24 synchronized rotating marquee lightbulbs with rapid-chase animations, and a 3D needle pointer casting layered depth shadows over passing pins.
+### 🎡 1. Mechanical 3D Spin Wheel & GPU Acceleration
+- **Physical Arcade Experience**: Features alternating dark metallic slate segments (`#1E293B`, `#334155`, `#475569`), 24 synchronized rotating marquee lightbulbs with rapid-chase animations, and a 3D needle pointer.
+- **Multi-Device 60fps/120fps Smoothness**: Hardware-accelerated compositor layer promotion (`will-change: transform`, `backface-visibility: hidden`) and smooth `cubic-bezier(0.15, 0.85, 0.15, 1)` deceleration curves eliminating micro-stuttering across mobile and high-refresh desktop monitors.
 - **Center "SPIN" Hub**: Brushed metallic button with interactive hover scaling, 24k gold text gradient, and breathing ambient glow.
 - **100% Fair Spin & Secure**: Docked glassmorphic trust badge affirming cryptographic fairness and client-server determinism.
 
-### 🗺️ 2. Gamified Spin Journey
-- **2:1 Column Alignment**: Harmoniously spans Columns 1 & 2 on desktop to align directly alongside *Your Inventory* on an identical baseline.
-- **3D Medallions & Glowing Conduits**: 3D gold coins for completed steps, pulsating active beacons with floating star indicators, and illuminated mystery treasure vaults.
-- **Universal Multi-Device Celebration**: Shimmering celebration card with a gold CTA button that adapts from desktop banners down to compact vertical mobile cards.
+### 🗺️ 2. Win Streak Journey (3 Consecutive Wins)
+- **3 Consecutive Wins Progress**: Tracks consecutive winning spins and resets progress back to `0` when landing on `Lose` (`reward.type === 'None'`).
+- **Dynamic Timeline Nodes**: Displays step-by-step progress (`Win 01`, `Win 02`, `Win 03`) with active glowing beacons, completed gold medallions, and mystery treasure vaults.
+- **Celebration Banner**: Shimmering celebration card with a gold CTA button that rewards players upon reaching 3 consecutive wins.
 
 ### 🎒 3. Live Inventory & Wallet Balances
 - **Real-Time Asset Tracking**: Color-coded illuminated medallions for **Gems** (Cyan), **VE Tokens** (Gold), **Gift Cards** (Ruby Coral), and **Level XP** (Amber).
 - **Glassmorphic Finish**: Frosted glass (`backdrop-filter: blur(16px)`), subtle gold interior rim light, and a pulsing live status indicator.
 
 ### 🎁 4. Ways to Get More Spins
-- **Gamified Quest Hub**: 5 structured earn cards covering Daily Check-Ins (`+3 Spins/Day`), Daily Quests, VE/Gem conversions, Referral Bonuses (`+2 Spins/Friend`), and Level-Up Milestone Bundles.
-- **High-Density Responsive Cards**: 2-tier card architecture preventing line-wrapping issues across mobile and desktop.
+- **Gamified Quest Hub**: Structured earn cards covering Daily Check-Ins (`+3 Spins/Day`), Daily Quests, VE/Gem conversions, Referral Bonuses (`+2 Spins/Friend`), and Level-Up Milestone Bundles.
+- **Frosted Glassmorphism**: Transparent glassmorphic background (`linear-gradient` with `backdrop-filter: blur(10px)`) seamless with Spin History and Spin Rules.
 
 ### 🔊 5. Tactile Web Audio Engine (`TactileAudioService`)
+- **Zero-Hang Lifecycle Management**: Instant Web Audio node disconnect on completion + `cancelAnimationFrame` cleanup preventing main-thread freezes or memory leaks.
 - **Frame-Perfect Angular Synchronization**: Mechanical clicks are tracked along the wheel's actual cubic-bezier deceleration curve using `requestAnimationFrame`, triggering sound only when a physical segment pin crosses the pointer needle.
-- **Zero-Dependency Native Synthesis**: Uses the Web Audio API with centralized master `GainNode`, active node tracking/cleanup on unmount, and click-free mute transitions with `localStorage` persistence.
+- **5-Spin 3D Intro Sound Sequence**: Synthesizes 5 synchronized metallic clicks ($1800\text{Hz} \to 600\text{Hz}$) matching 3D revolutions on page navigation underlaid by an $850\text{Hz} \to 160\text{Hz}$ whirring glide.
 - **Contextual Soundscapes**:
   - 🎯 **Tactile Pin Ticks**: Dual-layered transient click + metallic snap.
   - 🔒 **Mechanical Stop**: Solid lock-in latch click.
@@ -69,7 +70,7 @@ Veloop/
 │   │   │   ├── RewardPreview/    # Possible rewards preview with rarity badges
 │   │   │   ├── RewardResult/     # Prize unlock dialog modal
 │   │   │   ├── SpinHistory/      # Activity & spin history logs
-│   │   │   ├── SpinJourney/      # 3D Milestone quest timeline & bonus card
+│   │   │   ├── SpinJourney/      # 3 Consecutive Wins streak timeline & celebration card
 │   │   │   ├── SpinLoader/       # Floating spin state indicator
 │   │   │   ├── SpinRules/        # 'How It Works' guide with animated connectors
 │   │   │   ├── SuccessCelebration/ # Physics-based golden confetti particle bursts
@@ -78,6 +79,7 @@ Veloop/
 │   │   │   ├── WaysToEarn/       # 'Get More Spins' actionable quest cards
 │   │   │   └── WheelPointer/     # 3D needle pointer with physics ticking animation
 │   │   ├── config/
+│   │   │   ├── api.config.js     # Backend API endpoints & mock fallback configuration
 │   │   │   └── constants.js      # Reward tiers, probability weights, and rarity definitions
 │   │   ├── pages/
 │   │   │   └── SpinWheel/        # Main layout, 2:1 desktop grid, and tab views
@@ -141,9 +143,3 @@ npm run preview
 - **Deterministic Server-Side Verification**: Results can be calculated server-side with cryptographic seeds before the animation is initiated.
 - **Optimistic State Management**: Balances and spin counts update optimistically with rollback handling on network failure.
 - **Strict Audio & Animation Isolation**: Audio synthesis and confetti particle generation run entirely on the UI thread without influencing prize determination.
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
