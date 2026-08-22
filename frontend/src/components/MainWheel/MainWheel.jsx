@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Lock } from 'lucide-react';
 import styles from './MainWheel.module.css';
 import SpinLoader from '../SpinLoader/SpinLoader';
@@ -10,6 +10,17 @@ const segmentColors = ['#334155', '#1E293B', '#475569'];
 
 const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSpinning, disabled }) => {
   const [rotation, setRotation] = useState(0);
+  const [isIntroAnimating, setIsIntroAnimating] = useState(true);
+
+  useEffect(() => {
+    // Play synchronized 3D intro whirring sound on navigating to this page
+    soundFX.playIntro3DWhir();
+
+    const timer = setTimeout(() => {
+      setIsIntroAnimating(false);
+    }, 2600);
+    return () => clearTimeout(timer);
+  }, []);
 
   const numSegments = rewards.length;
   const segmentAngle = 360 / numSegments;
@@ -36,6 +47,9 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
     try {
       // Ensure audio context is ready on user click
       await soundFX.ensureAudioContext();
+
+      // Play synchronized 3D Left-to-Right rotation sound sequence
+      soundFX.playIntro3DWhir();
 
       // 1. Get the pre-determined result from backend
       const winningIndex = await onSpinRequest();
@@ -104,7 +118,7 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
 
   return (
     <div className={styles.mainWheelWrapper}>
-      <div className={styles.wheelContainer}>
+      <div className={`${styles.wheelContainer} ${isSpinning || isIntroAnimating ? styles.intro3DSpinLeftToRight : ''}`}>
         {/* Tangible Ticking Pointer Component */}
         <WheelPointer isSpinning={isSpinning} />
 
@@ -125,7 +139,7 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
                 className={styles.lightbulbWrapper}
                 style={{ transform: `rotate(${i * 15}deg)` }}
               >
-                <div className={`${styles.lightbulb} ${isSpinning ? styles.lightbulbSpinning : ''}`} />
+                <div className={`${styles.lightbulb} ${isSpinning || isIntroAnimating ? styles.lightbulbSpinning : ''}`} />
               </div>
             ))}
           </div>
