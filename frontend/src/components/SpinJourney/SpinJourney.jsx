@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './SpinJourney.module.css';
 import { Compass, Check, Gift, Sparkles, Loader2 } from 'lucide-react';
 
-const SpinJourney = ({ spinsTaken = 0, totalMilestone = 3, onClaimBonus, isClaimingBonus }) => {
+const SpinJourney = ({ spinsTaken = 0, totalMilestone = 3, onClaimBonus, isClaimingBonus, isClaimed = false }) => {
   const steps = Array.from({ length: totalMilestone });
   const isAllCompleted = spinsTaken >= totalMilestone;
 
@@ -103,18 +103,30 @@ const SpinJourney = ({ spinsTaken = 0, totalMilestone = 3, onClaimBonus, isClaim
           </div>
           <div className={styles.bonusTextContent}>
             <div className={styles.bonusTitleRow}>
-              <h4 className={styles.bonusTitle}>3 Consecutive Wins Unlocked!</h4>
-              <span className={styles.freeBadge}>+1 FREE</span>
+              <h4 className={styles.bonusTitle}>
+                {isClaimed ? '3 Consecutive Wins Completed!' : '3 Consecutive Wins Unlocked!'}
+              </h4>
+              <span className={isClaimed ? styles.claimedBadge : styles.freeBadge}>
+                {isClaimed ? '✓ CLAIMED' : '+1 FREE'}
+              </span>
             </div>
-            <p className={styles.bonusDesc}>You've conquered the 3-win streak! Enjoy your free bonus spin.</p>
+            <p className={styles.bonusDesc}>
+              {isClaimed 
+                ? 'Bonus spin added to your available spins! Resets in 24 hours.' 
+                : "You've conquered the 3-win streak! Enjoy your free bonus spin."}
+            </p>
           </div>
           <button 
-            className={styles.bonusBtn} 
+            className={`${styles.bonusBtn} ${isClaimed ? styles.bonusBtnClaimed : ''}`} 
             onClick={onClaimBonus}
-            disabled={isClaimingBonus}
+            disabled={isClaimingBonus || isClaimed}
           >
             {isClaimingBonus ? (
               <Loader2 size={16} className={styles.spinner} />
+            ) : isClaimed ? (
+              <>
+                <Check size={15} /> Claimed (+1 Spin)
+              </>
             ) : (
               <>
                 <Sparkles size={15} /> Play Now

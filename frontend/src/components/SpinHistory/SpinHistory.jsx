@@ -3,6 +3,26 @@ import styles from './SpinHistory.module.css';
 import { ChevronLeft, ChevronRight, Calendar, Loader2, History } from 'lucide-react';
 import { apiService } from '../../services/apiService';
 
+// Safe date formatter supporting ISO strings, timestamps, and pre-formatted strings
+const formatHistoryTime = (timeStr) => {
+  if (!timeStr) return '';
+  if (typeof timeStr === 'string' && timeStr.includes('·')) return timeStr;
+  try {
+    const date = new Date(timeStr);
+    if (isNaN(date.getTime())) return timeStr;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    return `${month} ${day} · ${hours}:${minutes} ${ampm}`;
+  } catch {
+    return timeStr;
+  }
+};
+
 const ITEMS_PER_PAGE = 5;
 
 const SpinHistory = () => {
@@ -88,15 +108,15 @@ const SpinHistory = () => {
             <span>Loading activity...</span>
           </div>
         ) : historyItems.length > 0 ? (
-          historyItems.map((item) => (
-            <div key={item.id} className={styles.item}>
+          historyItems.map((item, index) => (
+            <div key={item.id || item._id || index} className={styles.item}>
               <div className={styles.itemMain}>
                 <span className={styles.reward} style={{ color: item.reward === 'No Reward' ? 'var(--text-secondary)' : 'var(--text-primary)' }}>
                   {item.reward}
                 </span>
                 <span className={styles.type}>{item.type}</span>
               </div>
-              <div className={styles.time}>{item.time}</div>
+              <div className={styles.time}>{formatHistoryTime(item.time || item.createdAt)}</div>
             </div>
           ))
         ) : (

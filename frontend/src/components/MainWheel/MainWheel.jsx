@@ -53,7 +53,10 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
       await soundFX.ensureAudioContext();
 
       // 1. Get the pre-determined result from backend
-      const winningIndex = await onSpinRequest();
+      const rawWinningIndex = await onSpinRequest();
+      const winningIndex = (Number.isInteger(rawWinningIndex) && rawWinningIndex >= 0 && rawWinningIndex < numSegments)
+        ? rawWinningIndex
+        : 0;
 
       // 2. Calculate target rotation
       const extraRotations = 5 * 360; 

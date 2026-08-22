@@ -5,7 +5,7 @@ import { REWARDS } from '../config/constants';
 // --- MOCK DATABASE FOR OFFLINE / FALLBACK DEVELOPMENT ---
 const MOCK_STATE = {
   availableSpins: 8,
-  spinsTaken: 1,
+  spinsTaken: 0,
   balances: {
     gems: 150,
     ves: 1200,
@@ -19,7 +19,7 @@ const MOCK_STATE = {
     bonusSpins: 3
   },
   milestone: {
-    spinsTaken: 1,
+    spinsTaken: 0,
     totalMilestone: 3,
     isClaimed: false
   },
@@ -63,7 +63,8 @@ export const apiService = {
           availableSpins: MOCK_STATE.availableSpins,
           spinsTaken: MOCK_STATE.spinsTaken,
           balances: { ...MOCK_STATE.balances },
-          dailyBonus: { ...MOCK_STATE.dailyBonus }
+          dailyBonus: { ...MOCK_STATE.dailyBonus },
+          milestoneIsClaimed: MOCK_STATE.milestone.isClaimed
         });
       }, 400);
     });
@@ -211,13 +212,14 @@ export const apiService = {
     return new Promise((resolve) => {
       setTimeout(() => {
         MOCK_STATE.availableSpins += 1;
-        MOCK_STATE.spinsTaken = 0; // reset milestone tracker
+        MOCK_STATE.milestone.isClaimed = true;
         
         resolve({
           success: true,
           addedSpins: 1,
           availableSpins: MOCK_STATE.availableSpins,
-          spinsTaken: 0,
+          spinsTaken: MOCK_STATE.spinsTaken, // retains 3/3 wins until 24h reset
+          isClaimed: true,
           message: 'Bonus Spin Unlocked and Claimed!'
         });
       }, 500);

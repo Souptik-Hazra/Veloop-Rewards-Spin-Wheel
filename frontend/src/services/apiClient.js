@@ -41,9 +41,24 @@ class ApiClient {
       }
 
       if (!response.ok) {
-        const error = new Error(
-          (data && data.message) || `Request failed with status ${response.status}`
-        );
+        if (response.status === 401 || response.status === 403) {
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('veloop_auth_token');
+            sessionStorage.removeItem('veloop_auth_token');
+            window.dispatchEvent(new CustomEvent('veloop:unauthorized', { detail: { status: response.status } }));
+          }
+        }
+
+        let errorMessage = `Request failed with status ${response.status}`;
+        if (data && typeof data === 'object' && data.message) {
+          errorMessage = data.message;
+        } else if (typeof data === 'string' && (data.includes('<!DOCTYPE') || data.includes('<html'))) {
+          errorMessage = `Backend server gateway error (${response.status}). Please try again later.`;
+        } else if (typeof data === 'string' && data.trim().length > 0) {
+          errorMessage = data.trim();
+        }
+
+        const error = new Error(errorMessage);
         error.status = response.status;
         error.data = data;
         throw error;

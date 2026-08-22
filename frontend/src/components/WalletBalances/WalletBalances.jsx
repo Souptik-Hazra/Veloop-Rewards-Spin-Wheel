@@ -1,5 +1,5 @@
 import React from 'react';
-import { Gem, Crown, Gift, Zap, Wallet, Sparkles } from 'lucide-react';
+import { Gem, Crown, Gift, Zap, Wallet } from 'lucide-react';
 import styles from './WalletBalances.module.css';
 
 const WalletBalances = ({ balances }) => {

@@ -3,7 +3,7 @@ import { UserPlus, CircleDot, MousePointerClick, Gift, ShieldCheck, Check, Chevr
 import componentStyles from './SpinRules.module.css';
 import rulesGraphic from '../../assets/rules-graphic.png';
 
-const SpinRules = ({ styles }) => {
+const SpinRules = () => {
   return (
     <div className={componentStyles.container}>
       {/* HOW IT WORKS SECTION */}

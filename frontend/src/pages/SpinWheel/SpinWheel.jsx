@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './SpinWheel.module.css';
 import MainWheel from '../../components/MainWheel/MainWheel';
-import SpinHero from '../../components/SpinHero/SpinHero';
 import RewardPreview from '../../components/RewardPreview/RewardPreview';
 import SpinRules from '../../components/SpinRules/SpinRules';
 import RewardResult from '../../components/RewardResult/RewardResult';
@@ -17,7 +16,7 @@ import { soundFX } from '../../utils/audioService';
 
 const SpinWheel = () => {
   const [availableSpins, setAvailableSpins] = useState(5);
-  const [spinsTaken, setSpinsTaken] = useState(1);
+  const [spinsTaken, setSpinsTaken] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [wonReward, setWonReward] = useState(null);
@@ -25,6 +24,7 @@ const SpinWheel = () => {
   const [isTitleHidden, setIsTitleHidden] = useState(false);
   const [activeTab, setActiveTab] = useState(typeof window !== 'undefined' && window.innerWidth > 992 ? 'rules' : 'prizes');
   const [isMuted, setIsMuted] = useState(soundFX.getMuted());
+  const [milestoneIsClaimed, setMilestoneIsClaimed] = useState(false);
 
   // Subscribe to audio mute changes and clean up active audio on unmount
   useEffect(() => {
@@ -80,7 +80,7 @@ const SpinWheel = () => {
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [isSpinning]);
+  }, [isSpinning, isTitleHidden]);
 
   // Dynamic Countdown Timer
   useEffect(() => {
@@ -113,6 +113,7 @@ const SpinWheel = () => {
         setAvailableSpins(data.availableSpins ?? 5);
         setSpinsTaken(data.spinsTaken ?? 0);
         setBalances(data.balances || null);
+        setMilestoneIsClaimed(data.milestoneIsClaimed || false);
         if (data.dailyBonus) {
           setDailyBonus(data.dailyBonus);
           setCountdownSeconds(data.dailyBonus.resetsInSeconds ?? 45930);
@@ -131,12 +132,28 @@ const SpinWheel = () => {
   }, []);
 
   const handleSpinRequest = async () => {
+    // Security Guard 1: Verify user has available spins
+    if (availableSpins <= 0) {
+      soundFX.playEmptyTap();
+      const err = new Error('No spins available! Earn more spins to continue.');
+      showNotification(err.message, 'warning');
+      throw err;
+    }
+
     try {
-      const idempotencyKey = `spin_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      const response = await apiService.performSpin({ idempotencyKey });
+      const response = await apiService.performSpin();
+      if (response && response.pendingSpinResult) {
+        setPendingSpinResult(response.pendingSpinResult);
+      }
       
-      setPendingSpinResult(response);
-      return response.winningIndex;
+      const winningIndex = Number(response.winningIndex);
+      // Security Guard 2: Server index bounds validation
+      if (!Number.isInteger(winningIndex) || winningIndex < 0 || winningIndex >= REWARDS.length) {
+        console.error('[Security] Invalid winning index returned:', response.winningIndex);
+        return 0; // Fallback to index 0
+      }
+
+      return winningIndex;
     } catch (err) {
       setHasError(true);
       showNotification(err.message || 'Spin failed. Please try again.', 'error');
@@ -199,6 +216,8 @@ const SpinWheel = () => {
       if (response && response.success) {
         soundFX.playInteractionTap();
         setAvailableSpins(response.availableSpins);
+        setSpinsTaken(response.spinsTaken || 0);
+        setMilestoneIsClaimed(false);
         setDailyBonus(prev => ({
           ...prev,
           isClaimable: false,
@@ -222,7 +241,8 @@ const SpinWheel = () => {
       if (response && response.success) {
         soundFX.playInteractionTap();
         setAvailableSpins(response.availableSpins);
-        setSpinsTaken(response.spinsTaken || 0);
+        setSpinsTaken(response.spinsTaken ?? 3);
+        setMilestoneIsClaimed(true);
         showNotification(response.message || 'Milestone Bonus Spin Claimed!', 'success');
       }
     } catch (err) {
@@ -454,6 +474,7 @@ const SpinWheel = () => {
                   totalMilestone={3}
                   onClaimBonus={handleClaimMilestone}
                   isClaimingBonus={isClaimingMilestone}
+                  isClaimed={milestoneIsClaimed}
                 />
               </div>
 
