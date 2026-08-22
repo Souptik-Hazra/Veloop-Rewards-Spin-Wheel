@@ -240,6 +240,51 @@
   box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
 }
 
+.goldenWheelCenter {
+  background: linear-gradient(135deg, #FDE047 0%, #F59E0B 100%) !important;
+  border-color: #FFF !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.8) !important;
+}
+
+.goldenCenterInner {
+  background: radial-gradient(circle at center, #1E1B4B 0%, #0F172A 100%) !important;
+  border: 2px solid #FDE047 !important;
+  box-shadow: inset 0 0 12px rgba(245, 158, 11, 0.6) !important;
+}
+
+.goldenSpinBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  gap: 1px;
+  user-select: none;
+}
+
+.crownIcon {
+  font-size: 0.7rem;
+  line-height: 1;
+  margin-bottom: 1px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.goldenTextTitle {
+  font-size: 0.58rem;
+  font-weight: 900;
+  color: #FDE047;
+  letter-spacing: 0.8px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.goldenTextSub {
+  font-size: 0.52rem;
+  font-weight: 800;
+  color: #FFF;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
 .wheelCenter:hover:not(:disabled) {
   transform: translate(-50%, -50%) scale(1.06);
 }

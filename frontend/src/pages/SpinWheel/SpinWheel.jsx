@@ -25,6 +25,7 @@ const SpinWheel = () => {
   const [activeTab, setActiveTab] = useState(typeof window !== 'undefined' && window.innerWidth > 992 ? 'rules' : 'prizes');
   const [isMuted, setIsMuted] = useState(soundFX.getMuted());
   const [milestoneIsClaimed, setMilestoneIsClaimed] = useState(false);
+  const [isGoldenSpin, setIsGoldenSpin] = useState(false);
 
   // Subscribe to audio mute changes and clean up active audio on unmount
   useEffect(() => {
@@ -206,6 +207,7 @@ const SpinWheel = () => {
   const closeResult = () => {
     setShowResult(false);
     setWonReward(null);
+    setIsGoldenSpin(false); // Reverts Golden Bonus Wheel back to normal slate colors
   };
 
   const handleClaimDailyBonus = async () => {
@@ -243,7 +245,8 @@ const SpinWheel = () => {
         setAvailableSpins(response.availableSpins);
         setSpinsTaken(response.spinsTaken ?? 3);
         setMilestoneIsClaimed(true);
-        showNotification(response.message || 'Milestone Bonus Spin Claimed!', 'success');
+        setIsGoldenSpin(true); // Transforms wheel into 24k Golden Bonus Wheel!
+        showNotification('Golden Bonus Spin Unlocked! Click SPIN on the wheel to play.', 'success');
       }
     } catch (err) {
       showNotification(err.message || 'Failed to claim milestone bonus.', 'error');
@@ -411,6 +414,7 @@ const SpinWheel = () => {
                   isSpinning={isSpinning}
                   setIsSpinning={setIsSpinning}
                   disabled={availableSpins === 0}
+                  isGoldenSpin={isGoldenSpin}
                 />
                 <div className={styles.trustBadge}>
                   <ShieldCheck size={15} /> 100% Fair Spin & Secure

@@ -5,10 +5,21 @@ import SpinLoader from '../SpinLoader/SpinLoader';
 import WheelPointer from '../WheelPointer/WheelPointer';
 import { soundFX } from '../../utils/audioService';
 
-// Premium Fintech metallic segments - Distinct medium-dark slate (visible but not white)
-const segmentColors = ['#334155', '#1E293B', '#475569'];
+const normalSegmentColors = ['#334155', '#1E293B', '#475569'];
+// 9 Guaranteed Unique Vibrant Colors for all 9 Wheel Slices (Zero Adjacent Duplicates)
+const goldenSegmentColors = [
+  '#F59E0B', // 0: Amber Gold (10 VEs)
+  '#EC4899', // 1: Hot Pink (2 Gems)
+  '#8B5CF6', // 2: Imperial Purple (30 VEs)
+  '#10B981', // 3: Emerald Green (Free Spin)
+  '#06B6D4', // 4: Electric Cyan (Gift Card ₹2)
+  '#2563EB', // 5: Cobalt Blue (Gift Card ₹5)
+  '#EF4444', // 6: Ruby Crimson (10 XP)
+  '#F97316', // 7: Sunset Orange (30 XP)
+  '#7C3AED'  // 8: Deep Amethyst (Lose)
+];
 
-const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSpinning, disabled }) => {
+const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSpinning, disabled, isGoldenSpin = false }) => {
   const [rotation, setRotation] = useState(0);
   const [isIntroAnimating, setIsIntroAnimating] = useState(true);
   const animFrameRef = useRef(null);
@@ -25,18 +36,19 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
     };
   }, []);
 
-  const numSegments = rewards.length;
+  const safeRewards = Array.isArray(rewards) && rewards.length > 0 ? rewards : [];
+  const numSegments = safeRewards.length || 8;
   const segmentAngle = 360 / numSegments;
 
-  // Wheel background uses alternating dark metallic colors
+  // Wheel background uses alternating dark metallic or Golden Bonus colors
   const getWheelBackground = () => {
     let gradientParts = [];
+    const activeSegmentColors = isGoldenSpin ? goldenSegmentColors : normalSegmentColors;
     for (let i = 0; i < numSegments; i++) {
       const startAngle = i * segmentAngle;
       const endAngle = (i + 1) * segmentAngle;
-      const color = segmentColors[i % segmentColors.length];
+      const color = activeSegmentColors[i % activeSegmentColors.length];
       
-      // Add a tiny 0.5deg interpolation between segments to fix sub-pixel rendering gaps in browsers
       const blendStart = i === 0 ? 0 : startAngle + 0.5;
       gradientParts.push(`${color} ${blendStart}deg ${endAngle}deg`);
     }
@@ -129,7 +141,7 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
         {/* Floating SpinLoader */}
         {isSpinning && <SpinLoader />}
         
-        <div className={`${styles.wheelOuter} ${isIntroAnimating ? styles.intro3DSpinLeftToRight : ''}`}>
+        <div className={`${styles.wheelOuter} ${isGoldenSpin ? styles.goldenWheelOuter : ''} ${isIntroAnimating ? styles.intro3DSpinLeftToRight : ''}`}>
           {/* Rotating Outer Rim Lightbulbs */}
           <div 
             className={styles.rimLightsContainer}
@@ -149,7 +161,7 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
           </div>
 
           <div 
-            className={styles.wheelInner}
+            className={`${styles.wheelInner} ${isGoldenSpin ? styles.goldenWheelInner : ''}`}
             style={{ 
               background: getWheelBackground(),
               transform: `rotate(${rotation}deg)`
@@ -169,10 +181,10 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
               </div>
             )}
 
-            {rewards.map((reward, index) => {
+            {safeRewards.map((reward, index) => {
               const rotationAngle = (index * segmentAngle) + (segmentAngle / 2);
-              // Alternate text color between gold and silver for premium look
-              const textColor = index % 2 === 0 ? '#D4AF37' : '#E0E6ED';
+              // Vibrant white text for Golden Spin slices, gold/silver for normal
+              const textColor = isGoldenSpin ? '#FFFFFF' : (index % 2 === 0 ? '#D4AF37' : '#E0E6ED');
               
               // Text upright correction
               const isBottomHalf = rotationAngle > 90 && rotationAngle < 270;
@@ -191,6 +203,7 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
                     className={styles.segmentContent}
                     style={{ 
                       color: textColor,
+                      textShadow: isGoldenSpin ? '0 2px 5px rgba(0,0,0,0.95), 0 0 2px rgba(0,0,0,0.9)' : undefined,
                       transform: `translateX(-50%) rotate(${contentRotation}deg)`,
                       flexDirection: flexDirection
                     }}
@@ -205,12 +218,22 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
           
           {/* Brushed Metal Center Button */}
           <button 
-            className={styles.wheelCenter} 
+            className={`${styles.wheelCenter} ${isGoldenSpin ? styles.goldenWheelCenter : ''}`} 
             onClick={handleCenterClick}
             disabled={isSpinning}
           >
-            <div className={styles.centerInner}>
-              <span className={styles.spinText}>{isSpinning ? '...' : 'SPIN'}</span>
+            <div className={`${styles.centerInner} ${isGoldenSpin ? styles.goldenCenterInner : ''}`}>
+              {isSpinning ? (
+                <span className={styles.spinText}>...</span>
+              ) : isGoldenSpin ? (
+                <div className={styles.goldenSpinBadge}>
+                  <span className={styles.crownIcon}>👑</span>
+                  <span className={styles.goldenTextTitle}>GOLDEN</span>
+                  <span className={styles.goldenTextSub}>SPIN</span>
+                </div>
+              ) : (
+                <span className={styles.spinText}>SPIN</span>
+              )}
             </div>
           </button>
         </div>
