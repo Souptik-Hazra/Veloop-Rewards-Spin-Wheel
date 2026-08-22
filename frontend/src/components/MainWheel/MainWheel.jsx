@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Lock } from 'lucide-react';
 import styles from './MainWheel.module.css';
 import SpinLoader from '../SpinLoader/SpinLoader';
@@ -11,12 +11,18 @@ const segmentColors = ['#334155', '#1E293B', '#475569'];
 const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSpinning, disabled }) => {
   const [rotation, setRotation] = useState(0);
   const [isIntroAnimating, setIsIntroAnimating] = useState(true);
+  const animFrameRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsIntroAnimating(false);
     }, 2600);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+    };
   }, []);
 
   const numSegments = rewards.length;
@@ -79,13 +85,13 @@ const MainWheel = ({ rewards, onSpinRequest, onSpinComplete, isSpinning, setIsSp
         }
 
         if (progress < 1) {
-          requestAnimationFrame(trackSpinPhysics);
+          animFrameRef.current = requestAnimationFrame(trackSpinPhysics);
         } else {
           soundFX.playMechanicalStop();
         }
       };
 
-      requestAnimationFrame(trackSpinPhysics);
+      animFrameRef.current = requestAnimationFrame(trackSpinPhysics);
 
       setTimeout(() => {
         setIsSpinning(false);

@@ -84,6 +84,9 @@ class TactileAudioService {
   registerNode(osc) {
     this.activeNodes.add(osc);
     osc.onended = () => {
+      try {
+        osc.disconnect();
+      } catch {}
       this.activeNodes.delete(osc);
     };
   }
